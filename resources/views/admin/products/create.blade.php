@@ -1,579 +1,365 @@
 @extends('layouts.admin')
 
-@section('title', 'Add New Product - BUNNYPOPS')
+@section('title', 'Add New Product')
 
-@section('admin-content')
-<div class="max-w-4xl mx-auto">
-    <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-2xl md:text-3xl font-bold text-[#4D4C7D]">Add New Product</h1>
-        <p class="text-[#8E7AB5]">Fill in the details to add a new product to your catalog</p>
-    </div>
-
-    <!-- Form -->
-    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" id="product-form">
-        @csrf
-        
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <!-- Basic Information -->
-            <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                <i class="fas fa-info-circle mr-3 text-[#8E7AB5]"></i>
-                Basic Information
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Product Name -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Product Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" 
-                           name="name" 
-                           required
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="Enter product name">
-                    @error('name')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                    @enderror
+@section('content')
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>Add New Product
+                    </h4>
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
                 </div>
                 
-                <!-- Price -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Price (Rp) <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8E7AB5]">Rp</span>
-                        <input type="number" 
-                               name="price" 
-                               required
-                               min="0"
-                               step="1000"
-                               class="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                               placeholder="0">
+                <form action="#" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    
+                    <!-- Basic Information -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 text-primary">Basic Information</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label required">Product Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">SKU (Optional)</label>
+                                <input type="text" class="form-control" name="sku">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label required">Category</label>
+                                <select class="form-select" name="category_id" required>
+                                    <option value="">Select Category</option>
+                                    <option value="1">Electronics</option>
+                                    <option value="2">Fashion</option>
+                                    <option value="3">Home & Garden</option>
+                                    <option value="4">Books</option>
+                                    <option value="5">Sports</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Brand</label>
+                                <input type="text" class="form-control" name="brand">
+                            </div>
+                        </div>
                     </div>
-                    @error('price')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-                
-                <!-- Stock -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Stock <span class="text-red-500">*</span>
+                    
+                    <!-- Pricing -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 text-primary">Pricing</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label required">Regular Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" class="form-control" name="price" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Sale Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" class="form-control" name="sale_price">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tax Rate (%)</label>
+                                <input type="number" class="form-control" name="tax_rate" value="10" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Inventory -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 text-primary">Inventory</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label required">Stock Quantity</label>
+                                <input type="number" class="form-control" name="stock_quantity" value="0" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Low Stock Threshold</label>
+                                <input type="number" class="form-control" name="low_stock_threshold" value="5">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Stock Status</label>
+                                <select class="form-select" name="stock_status">
+                                    <option value="in_stock">In Stock</option>
+                                    <option value="out_of_stock">Out of Stock</option>
+                                    <option value="backorder">On Backorder</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Images -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 text-primary">Product Images</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Main Image</label>
+                                <div class="border rounded p-4 text-center">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    <p class="mb-2">Drag & drop or click to upload</p>
+                                    <input type="file" class="form-control" name="main_image" accept="image/*">
+                                    <small class="text-muted">Recommended: 800x800px, JPG/PNG</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Gallery Images</label>
+                                <div class="border rounded p-4 text-center">
+                                    <i class="fas fa-images fa-3x text-muted mb-3"></i>
+                                    <p class="mb-2">Upload multiple images</p>
+                                    <input type="file" class="form-control" name="gallery_images[]" multiple accept="image/*">
+                                    <small class="text-muted">You can select multiple files</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 text-primary">Description</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Short Description</label>
+                            <textarea class="form-control" name="short_description" rows="3" 
+                                      placeholder="Brief description shown in product listings"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Full Description</label>
+                            <textarea class="form-control" name="description" rows="6" 
+                                      placeholder="Detailed product description"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Attributes -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 text-primary">Attributes</h6>
+                        <div id="attributes-container">
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" placeholder="Attribute name" name="attributes[0][name]">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Values (comma separated)" name="attributes[0][values]">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-danger w-100" onclick="removeAttribute(this)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addAttribute()">
+                            <i class="fas fa-plus me-2"></i>Add Attribute
+                        </button>
+                    </div>
+                    
+                    <!-- SEO -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 text-primary">SEO Settings</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">SEO Title</label>
+                                <input type="text" class="form-control" name="seo_title">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Meta Keywords</label>
+                                <input type="text" class="form-control" name="meta_keywords" 
+                                       placeholder="keyword1, keyword2, keyword3">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Meta Description</label>
+                                <textarea class="form-control" name="meta_description" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit -->
+                    <div class="d-flex justify-content-end gap-3">
+                        <button type="reset" class="btn btn-outline-secondary">
+                            <i class="fas fa-redo me-2"></i>Reset
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Status Card -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Status</h6>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="status" id="status" checked>
+                    <label class="form-check-label" for="status">
+                        Product Active
                     </label>
-                    <input type="number" 
-                           name="stock" 
-                           required
-                           min="0"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="Enter stock quantity">
-                    @error('stock')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                    @enderror
                 </div>
-                
-                <!-- Category -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Category</label>
-                    <select name="category" 
-                            class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all appearance-none">
-                        <option value="">Select Category</option>
-                        <option value="apparel">Apparel</option>
-                        <option value="home_decor">Home Decor</option>
-                        <option value="gifts">Gifts</option>
-                        <option value="bunny_items">Bunny Items</option>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="featured" id="featured">
+                    <label class="form-check-label" for="featured">
+                        Featured Product
+                    </label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="in_stock" id="in_stock" checked>
+                    <label class="form-check-label" for="in_stock">
+                        In Stock
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Organization -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Organization</h6>
+                <div class="mb-3">
+                    <label class="form-label">Tags</label>
+                    <input type="text" class="form-control" name="tags" 
+                           placeholder="Add tags (comma separated)">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Weight (kg)</label>
+                    <input type="number" class="form-control" name="weight" step="0.01">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Dimensions (cm)</label>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <input type="number" class="form-control" placeholder="Length" name="length">
+                        </div>
+                        <div class="col-4">
+                            <input type="number" class="form-control" placeholder="Width" name="width">
+                        </div>
+                        <div class="col-4">
+                            <input type="number" class="form-control" placeholder="Height" name="height">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Shipping -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Shipping</h6>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" name="free_shipping" id="free_shipping">
+                    <label class="form-check-label" for="free_shipping">
+                        Free Shipping
+                    </label>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="shipping_taxable" id="shipping_taxable" checked>
+                    <label class="form-check-label" for="shipping_taxable">
+                        Shipping Taxable
+                    </label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Shipping Class</label>
+                    <select class="form-select" name="shipping_class_id">
+                        <option value="">No Shipping Class</option>
+                        <option value="1">Standard Shipping</option>
+                        <option value="2">Express Shipping</option>
+                        <option value="3">Overnight Shipping</option>
                     </select>
                 </div>
             </div>
-            
-            <!-- Description -->
-            <div class="mb-6">
-                <label class="block text-[#4D4C7D] font-medium mb-2">Description</label>
-                <textarea name="description" 
-                          rows="4"
-                          class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all resize-none"
-                          placeholder="Describe your product..."></textarea>
-                <div class="text-right text-sm text-[#8E7AB5] mt-1">
-                    <span id="char-count">0</span>/1000 characters
-                </div>
-                @error('description')
-                    <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                @enderror
-            </div>
         </div>
-
-        <!-- Product Image -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                <i class="fas fa-image mr-3 text-[#8E7AB5]"></i>
-                Product Image
-            </h2>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Image Upload -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Upload Image <span class="text-red-500">*</span>
-                    </label>
-                    <div class="border-2 border-dashed border-[#F9DCC4] rounded-xl p-6 text-center hover:border-[#8E7AB5] transition-colors cursor-pointer"
-                         onclick="document.getElementById('photo').click()">
-                        <input type="file" 
-                               id="photo" 
-                               name="photo" 
-                               accept="image/*"
-                               class="hidden"
-                               onchange="previewImage(this)"
-                               required>
-                        
-                        <div id="image-preview" class="hidden mb-4">
-                            <img id="preview-image" class="max-w-full max-h-64 mx-auto rounded-lg">
-                            <button type="button" 
-                                    onclick="removeImage()"
-                                    class="mt-2 text-[#FF6F61] hover:text-red-700">
-                                <i class="fas fa-trash mr-1"></i> Remove image
-                            </button>
-                        </div>
-                        
-                        <div id="upload-prompt">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-[#8E7AB5] mb-3"></i>
-                            <p class="text-[#4D4C7D] mb-2">Click to upload product image</p>
-                            <p class="text-sm text-[#8E7AB5] mb-4">Supported: JPG, PNG, WebP (Max: 2MB)</p>
-                            <div class="inline-block bg-[#FCEFEA] text-[#4D4C7D] px-6 py-2 rounded-lg font-bold">
-                                <i class="fas fa-image mr-2"></i> Choose File
-                            </div>
-                        </div>
-                    </div>
-                    @error('photo')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-                
-                <!-- Image Guidelines -->
-                <div>
-                    <h3 class="font-bold text-[#4D4C7D] mb-4">Image Guidelines</h3>
-                    <ul class="space-y-3 text-sm text-[#4D4C7D]">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Use high-quality images with good lighting</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Recommended size: 800x800 pixels or square ratio</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Show the product from multiple angles if possible</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Use white or neutral background for best results</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2 mt-1"></i>
-                            <span>Maximum file size: 2MB</span>
-                        </li>
-                    </ul>
-                    
-                    <!-- Preview Card -->
-                    <div class="mt-6 p-4 bg-[#FCEFEA] rounded-lg">
-                        <h4 class="font-bold text-[#4D4C7D] mb-2">Preview</h4>
-                        <p class="text-sm text-[#8E7AB5]">
-                            Your product will appear like this in the shop
-                        </p>
-                        <div id="preview-card" class="mt-4 bg-white rounded-lg shadow-sm p-4">
-                            <div class="w-full h-40 bg-gradient-to-br from-[#F9DCC4] to-[#8E7AB5] rounded-lg flex items-center justify-center mb-3">
-                                <i class="fas fa-box text-white text-3xl"></i>
-                            </div>
-                            <div class="font-bold text-[#4D4C7D] text-sm mb-1">Product Name</div>
-                            <div class="text-[#FF6F61] font-bold">Rp 0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Additional Information -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                <i class="fas fa-cog mr-3 text-[#8E7AB5]"></i>
-                Additional Information
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Weight -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Weight (kg)</label>
-                    <input type="number" 
-                           name="weight" 
-                           step="0.1"
-                           min="0"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="0.5">
-                </div>
-                
-                <!-- Dimensions -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Dimensions (cm)</label>
-                    <div class="flex gap-2">
-                        <input type="text" 
-                               name="dimensions_length" 
-                               placeholder="Length"
-                               class="flex-1 px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all">
-                        <input type="text" 
-                               name="dimensions_width" 
-                               placeholder="Width"
-                               class="flex-1 px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all">
-                        <input type="text" 
-                               name="dimensions_height" 
-                               placeholder="Height"
-                               class="flex-1 px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all">
-                    </div>
-                </div>
-                
-                <!-- Material -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Material</label>
-                    <input type="text" 
-                           name="material"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="e.g., Cotton, Polyester, etc.">
-                </div>
-                
-                <!-- Color -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Color</label>
-                    <input type="text" 
-                           name="color"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="e.g., Red, Blue, Pink, etc.">
-                </div>
-            </div>
-            
-            <!-- Features -->
-            <div class="mt-6">
-                <label class="block text-[#4D4C7D] font-medium mb-2">Features (Optional)</label>
-                <div id="features-container">
-                    <!-- Features will be added here -->
-                </div>
-                <button type="button" 
-                        onclick="addFeatureField()"
-                        class="mt-2 text-[#8E7AB5] hover:text-[#FF6F61] flex items-center">
-                    <i class="fas fa-plus mr-2"></i>
-                    Add Feature
-                </button>
-            </div>
-        </div>
-
-        <!-- SEO Settings -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                <i class="fas fa-search mr-3 text-[#8E7AB5]"></i>
-                SEO Settings
-            </h2>
-            
-            <div class="space-y-6">
-                <!-- Meta Title -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Meta Title</label>
-                    <input type="text" 
-                           name="meta_title"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="Optimized title for search engines">
-                    <div class="text-sm text-[#8E7AB5] mt-1">
-                        Recommended: 50-60 characters
-                    </div>
-                </div>
-                
-                <!-- Meta Description -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Meta Description</label>
-                    <textarea name="meta_description" 
-                              rows="3"
-                              class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all resize-none"
-                              placeholder="Brief description for search engine results"></textarea>
-                    <div class="text-sm text-[#8E7AB5] mt-1">
-                        Recommended: 150-160 characters
-                    </div>
-                </div>
-                
-                <!-- Keywords -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Keywords</label>
-                    <input type="text" 
-                           name="keywords"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="cute, bunny, plush, gift, etc.">
-                    <div class="text-sm text-[#8E7AB5] mt-1">
-                        Separate keywords with commas
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <div class="flex flex-col md:flex-row gap-4">
-                <button type="submit" 
-                        class="flex-1 bg-gradient-to-r from-[#FF6F61] to-[#8E7AB5] text-white py-4 rounded-lg font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center justify-center">
-                    <i class="fas fa-save mr-2"></i>
-                    Save Product
-                </button>
-                
-                <button type="button" 
-                        onclick="saveAsDraft()"
-                        class="flex-1 bg-[#FCEFEA] text-[#4D4C7D] py-4 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors shadow-lg hover:shadow-xl flex items-center justify-center">
-                    <i class="fas fa-file-alt mr-2"></i>
-                    Save as Draft
-                </button>
-                
-                <a href="{{ route('admin.products.index') }}" 
-                   class="flex-1 bg-white border-2 border-[#F9DCC4] text-[#4D4C7D] py-4 rounded-lg font-bold hover:bg-[#FCEFEA] transition-colors shadow-lg hover:shadow-xl flex items-center justify-center">
-                    <i class="fas fa-times mr-2"></i>
-                    Cancel
-                </a>
-            </div>
-            
-            <!-- Save Options -->
-            <div class="mt-6 pt-6 border-t border-[#F9DCC4]">
-                <label class="flex items-center">
-                    <input type="checkbox" 
-                           name="publish" 
-                           checked
-                           class="w-4 h-4 text-[#FF6F61] border-[#F9DCC4] rounded focus:ring-[#FF6F61]">
-                    <span class="ml-2 text-[#4D4C7D]">Publish immediately</span>
-                </label>
-                
-                <label class="flex items-center mt-3">
-                    <input type="checkbox" 
-                           name="featured"
-                           class="w-4 h-4 text-[#FF6F61] border-[#F9DCC4] rounded focus:ring-[#FF6F61]">
-                    <span class="ml-2 text-[#4D4C7D]">Mark as featured product</span>
-                </label>
-            </div>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
-    // Character counter for description
-    const descriptionTextarea = document.querySelector('textarea[name="description"]');
-    const charCount = document.getElementById('char-count');
+    let attributeCount = 1;
     
-    if (descriptionTextarea && charCount) {
-        descriptionTextarea.addEventListener('input', function() {
-            charCount.textContent = this.value.length;
-            
-            // Update preview card
-            const previewName = document.querySelector('#preview-card .font-bold');
-            if (previewName && !previewName.textContent.includes('Product Name')) {
-                previewName.textContent = this.value.substring(0, 50) + (this.value.length > 50 ? '...' : '');
-            }
-        });
-    }
-    
-    // Update preview card with form data
-    document.querySelectorAll('input[name="name"], input[name="price"]').forEach(input => {
-        input.addEventListener('input', updatePreviewCard);
-    });
-    
-    function updatePreviewCard() {
-        const nameInput = document.querySelector('input[name="name"]');
-        const priceInput = document.querySelector('input[name="price"]');
-        const previewCard = document.getElementById('preview-card');
-        
-        if (previewCard && nameInput && priceInput) {
-            const nameElement = previewCard.querySelector('.font-bold.text-sm');
-            const priceElement = previewCard.querySelector('.text-\[#FF6F61\]');
-            
-            if (nameElement && nameInput.value) {
-                nameElement.textContent = nameInput.value.substring(0, 50) + (nameInput.value.length > 50 ? '...' : '');
-            }
-            
-            if (priceElement && priceInput.value) {
-                const formattedPrice = new Intl.NumberFormat('id-ID').format(priceInput.value);
-                priceElement.textContent = 'Rp ' + formattedPrice;
-            }
-        }
-    }
-    
-    // Image preview
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            const maxSize = 2 * 1024 * 1024; // 2MB
-            
-            if (input.files[0].size > maxSize) {
-                alert('File size must be less than 2MB');
-                input.value = '';
-                return;
-            }
-            
-            reader.onload = function(e) {
-                document.getElementById('preview-image').src = e.target.result;
-                document.getElementById('image-preview').style.display = 'block';
-                document.getElementById('upload-prompt').style.display = 'none';
-                
-                // Update preview card image
-                const previewCardImage = document.querySelector('#preview-card div:first-child');
-                if (previewCardImage) {
-                    previewCardImage.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-lg">`;
-                }
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
-    function removeImage() {
-        document.getElementById('photo').value = '';
-        document.getElementById('image-preview').style.display = 'none';
-        document.getElementById('upload-prompt').style.display = 'block';
-        
-        // Reset preview card image
-        const previewCardImage = document.querySelector('#preview-card div:first-child');
-        if (previewCardImage) {
-            previewCardImage.innerHTML = '<i class="fas fa-box text-white text-3xl"></i>';
-        }
-    }
-    
-    // Features management
-    let featureCount = 0;
-    
-    function addFeatureField(value = '') {
-        featureCount++;
-        const container = document.getElementById('features-container');
-        
-        const featureDiv = document.createElement('div');
-        featureDiv.className = 'flex gap-2 mb-2';
-        featureDiv.innerHTML = `
-            <input type="text" 
-                   name="features[]" 
-                   value="${value}"
-                   class="flex-grow px-4 py-2 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                   placeholder="Enter feature (e.g., Machine washable, Non-toxic)">
-            <button type="button" 
-                    onclick="this.parentElement.remove()"
-                    class="w-10 h-10 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-100 transition-colors">
-                <i class="fas fa-times"></i>
-            </button>
+    function addAttribute() {
+        const container = document.getElementById('attributes-container');
+        const div = document.createElement('div');
+        div.className = 'row g-2 mb-2';
+        div.innerHTML = `
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Attribute name" name="attributes[${attributeCount}][name]">
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Values (comma separated)" name="attributes[${attributeCount}][values]">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger w-100" onclick="removeAttribute(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         `;
-        
-        container.appendChild(featureDiv);
+        container.appendChild(div);
+        attributeCount++;
+    }
+    
+    function removeAttribute(button) {
+        if (document.querySelectorAll('#attributes-container .row').length > 1) {
+            button.closest('.row').remove();
+        }
     }
     
     // Form validation
-    document.getElementById('product-form').addEventListener('submit', function(e) {
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
-        // Validate required fields
+    document.querySelector('form').addEventListener('submit', function(e) {
         const requiredFields = this.querySelectorAll('[required]');
-        let isValid = true;
+        let valid = true;
         
         requiredFields.forEach(field => {
             if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('border-red-500');
-                field.classList.remove('border-[#F9DCC4]');
+                valid = false;
+                field.classList.add('is-invalid');
             } else {
-                field.classList.remove('border-red-500');
-                field.classList.add('border-[#F9DCC4]');
+                field.classList.remove('is-invalid');
             }
         });
         
-        if (!isValid) {
+        if (!valid) {
             e.preventDefault();
-            alert('Please fill in all required fields');
-            return;
-        }
-        
-        // Validate image
-        const imageInput = document.getElementById('photo');
-        if (imageInput && imageInput.files.length > 0) {
-            const file = imageInput.files[0];
-            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-            const maxSize = 2 * 1024 * 1024; // 2MB
-            
-            if (!validTypes.includes(file.type)) {
-                e.preventDefault();
-                alert('Only JPG, PNG, and WebP images are allowed');
-                return;
-            }
-            
-            if (file.size > maxSize) {
-                e.preventDefault();
-                alert('Image size must be less than 2MB');
-                return;
-            }
-        }
-        
-        // Show loading
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
-        submitBtn.disabled = true;
-    });
-    
-    function saveAsDraft() {
-        const form = document.getElementById('product-form');
-        const draftInput = document.createElement('input');
-        draftInput.type = 'hidden';
-        draftInput.name = 'draft';
-        draftInput.value = '1';
-        form.appendChild(draftInput);
-        form.submit();
-    }
-    
-    // Auto-save draft
-    let autoSaveTimeout;
-    document.querySelectorAll('#product-form input, #product-form textarea, #product-form select').forEach(element => {
-        element.addEventListener('input', function() {
-            clearTimeout(autoSaveTimeout);
-            autoSaveTimeout = setTimeout(saveDraft, 3000);
-        });
-    });
-    
-    function saveDraft() {
-        console.log('Auto-saving draft...');
-        // Implement auto-save functionality here
-    }
-    
-    // Load saved draft on page load
-    window.addEventListener('load', function() {
-        const savedDraft = localStorage.getItem('product_draft');
-        if (savedDraft) {
-            const draft = JSON.parse(savedDraft);
-            Object.keys(draft).forEach(key => {
-                const field = document.querySelector(`[name="${key}"]`);
-                if (field) {
-                    if (field.type === 'checkbox') {
-                        field.checked = draft[key];
-                    } else {
-                        field.value = draft[key];
-                    }
-                }
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please fill in all required fields.'
             });
-            
-            if (confirm('Found a saved draft. Would you like to restore it?')) {
-                updatePreviewCard();
-            }
         }
-    });
-    
-    // Save draft before leaving page
-    window.addEventListener('beforeunload', function(e) {
-        const formData = new FormData(document.getElementById('product-form'));
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
-        localStorage.setItem('product_draft', JSON.stringify(data));
     });
 </script>
 
 <style>
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+    .form-label.required::after {
+        content: ' *';
+        color: #dc3545;
+    }
+    
+    .form-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+    }
+    
+    .card {
+        border-radius: 12px;
+    }
+    
+    input[type="file"] {
+        border: 1px dashed #dee2e6;
+        padding: 0.5rem;
+        background: #f8f9fa;
+    }
+    
+    input[type="file"]:hover {
+        border-color: #4361ee;
+        background: rgba(67, 97, 238, 0.05);
     }
 </style>
 @endsection

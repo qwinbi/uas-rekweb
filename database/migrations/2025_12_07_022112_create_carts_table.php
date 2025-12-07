@@ -10,12 +10,20 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+
+            // Jika ingin tetap pakai foreign key
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('product_id');
+
             $table->integer('quantity')->default(1);
             $table->timestamps();
-            
+
+            // Optional: unik per user per produk
             $table->unique(['user_id', 'product_id']);
+
+            // Foreign key manual biar tidak error jika table belum ada
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
 

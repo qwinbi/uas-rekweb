@@ -1,340 +1,269 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin Dashboard - BUNNYPOPS')
+@section('title', 'Dashboard')
 
-@section('admin-content')
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-[#4D4C7D]">Dashboard</h1>
-    <p class="text-[#8E7AB5]">Welcome back, {{ auth()->user()->name }}!</p>
+@section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold">
+        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+    </h1>
+    <div class="text-muted">
+        <i class="fas fa-calendar-alt me-1"></i>
+        {{ now()->format('d F Y') }}
+    </div>
 </div>
 
 <!-- Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <!-- New Orders -->
-    <div class="bg-white rounded-2xl shadow-lg p-6">
-        <div class="flex items-center justify-between mb-4">
-            <div>
-                <div class="text-3xl font-bold text-[#4D4C7D]">{{ $newTransactions }}</div>
-                <div class="text-sm text-[#8E7AB5]">New Orders</div>
-            </div>
-            <div class="w-12 h-12 bg-[#FF6F61] rounded-full flex items-center justify-center">
-                <i class="fas fa-shopping-cart text-white text-xl"></i>
-            </div>
-        </div>
-        <div class="text-sm text-[#4D4C7D]">
-            <span class="text-green-600 font-bold">+12%</span> from last month
-        </div>
-    </div>
-
-    <!-- Total Products -->
-    <div class="bg-white rounded-2xl shadow-lg p-6">
-        <div class="flex items-center justify-between mb-4">
-            <div>
-                <div class="text-3xl font-bold text-[#4D4C7D]">{{ $totalProducts }}</div>
-                <div class="text-sm text-[#8E7AB5]">Total Products</div>
-            </div>
-            <div class="w-12 h-12 bg-[#8E7AB5] rounded-full flex items-center justify-center">
-                <i class="fas fa-box text-white text-xl"></i>
-            </div>
-        </div>
-        <div class="text-sm text-[#4D4C7D]">
-            <a href="{{ route('admin.products.index') }}" class="text-[#FF6F61] hover:underline">
-                Manage products →
-            </a>
-        </div>
-    </div>
-
-    <!-- Total Sales -->
-    <div class="bg-white rounded-2xl shadow-lg p-6">
-        <div class="flex items-center justify-between mb-4">
-            <div>
-                <div class="text-3xl font-bold text-[#4D4C7D]">{{ $totalTransactions }}</div>
-                <div class="text-sm text-[#8E7AB5]">Total Transactions</div>
-            </div>
-            <div class="w-12 h-12 bg-[#4D4C7D] rounded-full flex items-center justify-center">
-                <i class="fas fa-receipt text-white text-xl"></i>
-            </div>
-        </div>
-        <div class="text-sm text-[#4D4C7D]">
-            <a href="{{ route('admin.transactions.index') }}" class="text-[#FF6F61] hover:underline">
-                View all →
-            </a>
-        </div>
-    </div>
-
-    <!-- Total Revenue -->
-    <div class="bg-white rounded-2xl shadow-lg p-6">
-        <div class="flex items-center justify-between mb-4">
-            <div>
-                <div class="text-3xl font-bold text-[#4D4C7D]">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</div>
-                <div class="text-sm text-[#8E7AB5]">Total Revenue</div>
-            </div>
-            <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                <i class="fas fa-money-bill-wave text-white text-xl"></i>
-            </div>
-        </div>
-        <div class="text-sm text-[#4D4C7D]">
-            <span class="text-green-600 font-bold">+24%</span> from last month
-        </div>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- Recent Orders -->
-    <div class="bg-white rounded-2xl shadow-lg p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold text-[#4D4C7D]">Recent Orders</h2>
-            <a href="{{ route('admin.transactions.index') }}" class="text-[#8E7AB5] hover:text-[#FF6F61] text-sm">
-                View all →
-            </a>
-        </div>
-        
-        <div class="space-y-4">
-            @php
-                $recentTransactions = \App\Models\Transaction::with('user')
-                    ->latest()
-                    ->take(5)
-                    ->get();
-            @endphp
-            
-            @forelse($recentTransactions as $transaction)
-            <div class="flex items-center justify-between p-3 border border-[#F9DCC4] rounded-lg">
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stat-card primary rounded-3">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="font-bold text-[#4D4C7D]">{{ $transaction->invoice_number }}</div>
-                    <div class="text-sm text-[#8E7AB5]">
-                        {{ $transaction->user->name }} • {{ $transaction->created_at->diffForHumans() }}
-                    </div>
+                    <h2 class="fw-bold mb-0">1,248</h2>
+                    <p class="mb-0">Total Orders</p>
                 </div>
-                <div class="text-right">
-                    <div class="font-bold text-[#FF6F61]">Rp {{ number_format($transaction->total, 0, ',', '.') }}</div>
-                    <div>
-                        @if($transaction->status == 'completed')
-                            <span class="text-xs text-green-600 font-bold">Completed</span>
-                        @elseif($transaction->status == 'processing')
-                            <span class="text-xs text-blue-600 font-bold">Processing</span>
-                        @else
-                            <span class="text-xs text-yellow-600 font-bold">Pending</span>
-                        @endif
-                    </div>
+                <div class="icon">
+                    <i class="fas fa-shopping-cart"></i>
                 </div>
             </div>
-            @empty
-            <div class="text-center py-8">
-                <i class="fas fa-receipt text-4xl text-[#8E7AB5] mb-3"></i>
-                <p class="text-[#4D4C7D]">No orders yet</p>
+            <div class="mt-3">
+                <span class="small">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    12.5% from last month
+                </span>
             </div>
-            @endforelse
         </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="bg-white rounded-2xl shadow-lg p-6">
-        <h2 class="text-xl font-bold text-[#4D4C7D] mb-6">Quick Actions</h2>
-        
-        <div class="grid grid-cols-2 gap-4">
-            <a href="{{ route('admin.products.create') }}" 
-               class="bg-[#FCEFEA] rounded-xl p-4 hover:bg-[#F9DCC4] transition-colors group">
-                <div class="w-12 h-12 bg-[#FF6F61] rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-plus text-white text-xl"></i>
-                </div>
-                <div class="font-bold text-[#4D4C7D]">Add Product</div>
-                <div class="text-sm text-[#8E7AB5]">Create new product</div>
-            </a>
-            
-            <a href="{{ route('admin.settings.logo') }}" 
-               class="bg-[#FCEFEA] rounded-xl p-4 hover:bg-[#F9DCC4] transition-colors group">
-                <div class="w-12 h-12 bg-[#8E7AB5] rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-image text-white text-xl"></i>
-                </div>
-                <div class="font-bold text-[#4D4C7D]">Update Logo</div>
-                <div class="text-sm text-[#8E7AB5]">Change website logo</div>
-            </a>
-            
-            <a href="{{ route('admin.settings.qris') }}" 
-               class="bg-[#FCEFEA] rounded-xl p-4 hover:bg-[#F9DCC4] transition-colors group">
-                <div class="w-12 h-12 bg-[#4D4C7D] rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-qrcode text-white text-xl"></i>
-                </div>
-                <div class="font-bold text-[#4D4C7D]">Payment Settings</div>
-                <div class="text-sm text-[#8E7AB5]">Update QRIS & VA</div>
-            </a>
-            
-            <a href="{{ route('admin.settings.about') }}" 
-               class="bg-[#FCEFEA] rounded-xl p-4 hover:bg-[#F9DCC4] transition-colors group">
-                <div class="w-12 h-12 bg-[#F9DCC4] rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-info-circle text-[#4D4C7D] text-xl"></i>
-                </div>
-                <div class="font-bold text-[#4D4C7D]">About Page</div>
-                <div class="text-sm text-[#8E7AB5]">Edit about content</div>
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- Recent Products -->
-<div class="mt-8 bg-white rounded-2xl shadow-lg p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold text-[#4D4C7D]">Recent Products</h2>
-        <a href="{{ route('admin.products.index') }}" class="text-[#8E7AB5] hover:text-[#FF6F61] text-sm">
-            View all →
-        </a>
     </div>
     
-    <div class="overflow-x-auto">
-        <table class="w-full">
-            <thead>
-                <tr class="bg-[#FCEFEA]">
-                    <th class="text-left p-3 text-[#4D4C7D] font-bold">Product</th>
-                    <th class="text-left p-3 text-[#4D4C7D] font-bold">Price</th>
-                    <th class="text-left p-3 text-[#4D4C7D] font-bold">Stock</th>
-                    <th class="text-left p-3 text-[#4D4C7D] font-bold">Status</th>
-                    <th class="text-left p-3 text-[#4D4C7D] font-bold">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    $recentProducts = \App\Models\Product::latest()->take(5)->get();
-                @endphp
-                
-                @forelse($recentProducts as $product)
-                <tr class="border-b border-[#F9DCC4] hover:bg-[#FCEFEA]/50">
-                    <td class="p-3">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gradient-to-br from-[#F9DCC4] to-[#8E7AB5] rounded-lg flex items-center justify-center mr-3">
-                                @if($product->photo)
-                                    <img src="{{ asset('storage/products/' . $product->photo) }}" 
-                                         alt="{{ $product->name }}" 
-                                         class="w-full h-full object-cover rounded-lg">
-                                @else
-                                    <i class="fas fa-box text-white text-sm"></i>
-                                @endif
-                            </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stat-card success rounded-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-0">Rp 256M</h2>
+                    <p class="mb-0">Total Revenue</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <span class="small">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    18.2% from last month
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stat-card warning rounded-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-0">586</h2>
+                    <p class="mb-0">Total Products</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-box"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <span class="small">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    5 new this week
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stat-card danger rounded-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="fw-bold mb-0">3,824</h2>
+                    <p class="mb-0">Total Customers</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            <div class="mt-3">
+                <span class="small">
+                    <i class="fas fa-arrow-up me-1"></i>
+                    24 new today
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts & Recent Activities -->
+<div class="row">
+    <!-- Revenue Chart -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Revenue Overview</h5>
+                    <select class="form-select form-select-sm" style="width: auto;">
+                        <option>Last 7 Days</option>
+                        <option selected>Last 30 Days</option>
+                        <option>Last 90 Days</option>
+                    </select>
+                </div>
+                <div class="chart-container" style="height: 300px;">
+                    <!-- Chart would be implemented with Chart.js -->
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-chart-line fa-3x mb-3"></i>
+                        <p>Revenue chart would be displayed here</p>
+                        <p class="small">Using Chart.js or similar library</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Orders -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="fw-bold mb-4">Recent Orders</h5>
+                <div class="list-group list-group-flush">
+                    @for($i = 1; $i <= 5; $i++)
+                    <div class="list-group-item border-0 px-0 py-3">
+                        <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <div class="font-bold text-[#4D4C7D]">{{ $product->name }}</div>
-                                <div class="text-sm text-[#8E7AB5] truncate max-w-xs">{{ $product->description }}</div>
+                                <h6 class="fw-bold mb-1">Order #ORD{{ 1000 + $i }}</h6>
+                                <small class="text-muted">Customer {{ $i }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-success">Completed</span>
+                                <div class="fw-bold mt-1">Rp {{ number_format(rand(50000, 500000), 0, ',', '.') }}</div>
                             </div>
                         </div>
-                    </td>
-                    
-                    <td class="p-3">
-                        <div class="font-bold text-[#FF6F61]">
-                            Rp {{ number_format($product->price, 0, ',', '.') }}
-                        </div>
-                    </td>
-                    
-                    <td class="p-3">
-                        <div class="{{ $product->stock < 10 ? 'text-yellow-600' : 'text-green-600' }} font-bold">
-                            {{ $product->stock }}
-                        </div>
-                    </td>
-                    
-                    <td class="p-3">
-                        @if($product->stock > 10)
-                            <span class="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold">
-                                In Stock
-                            </span>
-                        @elseif($product->stock > 0)
-                            <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-bold">
-                                Low Stock
-                            </span>
-                        @else
-                            <span class="px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-bold">
-                                Out of Stock
-                            </span>
-                        @endif
-                    </td>
-                    
-                    <td class="p-3">
-                        <div class="flex gap-2">
-                            <a href="{{ route('admin.products.edit', $product->id) }}" 
-                               class="w-8 h-8 bg-[#FCEFEA] text-[#4D4C7D] rounded-lg flex items-center justify-center hover:bg-[#F9DCC4] transition-colors">
-                                <i class="fas fa-edit text-sm"></i>
-                            </a>
-                            <a href="{{ route('product.detail', $product->id) }}" 
-                               target="_blank"
-                               class="w-8 h-8 bg-[#FCEFEA] text-[#4D4C7D] rounded-lg flex items-center justify-center hover:bg-[#F9DCC4] transition-colors">
-                                <i class="fas fa-eye text-sm"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="p-8 text-center">
-                        <i class="fas fa-box-open text-4xl text-[#8E7AB5] mb-3"></i>
-                        <p class="text-[#4D4C7D]">No products yet</p>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- System Status -->
-<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white rounded-2xl shadow-lg p-6">
-        <h3 class="font-bold text-[#4D4C7D] mb-4">System Status</h3>
-        <div class="space-y-3">
-            <div class="flex items-center justify-between">
-                <span class="text-[#4D4C7D]">Storage</span>
-                <span class="text-green-600 font-bold">85%</span>
-            </div>
-            <div class="w-full h-2 bg-[#FCEFEA] rounded-full overflow-hidden">
-                <div class="h-full bg-green-500 rounded-full" style="width: 85%"></div>
-            </div>
-            
-            <div class="flex items-center justify-between">
-                <span class="text-[#4D4C7D]">Memory</span>
-                <span class="text-blue-600 font-bold">67%</span>
-            </div>
-            <div class="w-full h-2 bg-[#FCEFEA] rounded-full overflow-hidden">
-                <div class="h-full bg-blue-500 rounded-full" style="width: 67%"></div>
-            </div>
-            
-            <div class="flex items-center justify-between">
-                <span class="text-[#4D4C7D]">CPU</span>
-                <span class="text-purple-600 font-bold">42%</span>
-            </div>
-            <div class="w-full h-2 bg-[#FCEFEA] rounded-full overflow-hidden">
-                <div class="h-full bg-purple-500 rounded-full" style="width: 42%"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-lg p-6 md:col-span-2">
-        <h3 class="font-bold text-[#4D4C7D] mb-4">Activity Log</h3>
-        <div class="space-y-4">
-            <div class="flex items-center p-3 bg-[#FCEFEA] rounded-lg">
-                <div class="w-8 h-8 bg-[#FF6F61] rounded-full flex items-center justify-center mr-3">
-                    <i class="fas fa-user-cog text-white text-sm"></i>
+                    </div>
+                    @endfor
                 </div>
-                <div class="flex-grow">
-                    <div class="font-bold text-[#4D4C7D]">You logged in</div>
-                    <div class="text-sm text-[#8E7AB5]">Just now</div>
-                </div>
-            </div>
-            
-            <div class="flex items-center p-3 bg-[#FCEFEA] rounded-lg">
-                <div class="w-8 h-8 bg-[#8E7AB5] rounded-full flex items-center justify-center mr-3">
-                    <i class="fas fa-box text-white text-sm"></i>
-                </div>
-                <div class="flex-grow">
-                    <div class="font-bold text-[#4D4C7D]">New product added</div>
-                    <div class="text-sm text-[#8E7AB5]">2 hours ago</div>
-                </div>
-            </div>
-            
-            <div class="flex items-center p-3 bg-[#FCEFEA] rounded-lg">
-                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
-                    <i class="fas fa-check text-white text-sm"></i>
-                </div>
-                <div class="flex-grow">
-                    <div class="font-bold text-[#4D4C7D]">Order #INV-20240101-0001 completed</div>
-                    <div class="text-sm text-[#8E7AB5]">Yesterday</div>
+                <div class="text-center mt-3">
+                    <a href="{{ route('admin.transactions.index') }}" class="btn btn-outline-primary btn-sm">
+                        View All Orders
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Products & Quick Stats -->
+<div class="row">
+    <!-- Low Stock Products -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-4">Low Stock Products</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for($i = 1; $i <= 5; $i++)
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80" 
+                                             class="rounded me-2" width="40">
+                                        <span>Product Name {{ $i }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ rand(1, 10) }}</td>
+                                <td>
+                                    @php $stock = rand(1, 10); @endphp
+                                    @if($stock <= 3)
+                                    <span class="badge bg-danger">Critical</span>
+                                    @elseif($stock <= 5)
+                                    <span class="badge bg-warning">Low</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @endfor
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold mb-4">Quick Stats</h5>
+                <div class="row">
+                    @for($i = 1; $i <= 4; $i++)
+                    <div class="col-6 mb-4">
+                        <div class="text-center p-3 border rounded-3">
+                            @php
+                                $stats = [
+                                    ['icon' => 'fas fa-clock', 'title' => 'Pending', 'value' => rand(5, 20), 'color' => 'warning'],
+                                    ['icon' => 'fas fa-check-circle', 'title' => 'Completed', 'value' => rand(100, 200), 'color' => 'success'],
+                                    ['icon' => 'fas fa-truck', 'title' => 'Shipping', 'value' => rand(10, 30), 'color' => 'info'],
+                                    ['icon' => 'fas fa-times-circle', 'title' => 'Cancelled', 'value' => rand(1, 10), 'color' => 'danger'],
+                                ];
+                            @endphp
+                            <div class="icon-wrapper mb-2">
+                                <i class="{{ $stats[$i-1]['icon'] }} fa-2x text-{{ $stats[$i-1]['color'] }}"></i>
+                            </div>
+                            <h3 class="fw-bold mb-1">{{ $stats[$i-1]['value'] }}</h3>
+                            <small class="text-muted">{{ $stats[$i-1]['title'] }} Orders</small>
+                        </div>
+                    </div>
+                    @endfor
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-card {
+        padding: 1.5rem;
+        color: white;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-card .icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+    
+    .stat-card.primary { background: linear-gradient(135deg, #4361ee, #3a0ca3); }
+    .stat-card.success { background: linear-gradient(135deg, #4caf50, #2e7d32); }
+    .stat-card.warning { background: linear-gradient(135deg, #ff9800, #ef6c00); }
+    .stat-card.danger { background: linear-gradient(135deg, #f44336, #c62828); }
+    
+    .icon-wrapper {
+        width: 60px;
+        height: 60px;
+        background: rgba(67, 97, 238, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    table.table-hover tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+</style>
 @endsection

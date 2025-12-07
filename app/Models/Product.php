@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -11,49 +12,153 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'price',
-        'stock',
+        'slug',
         'description',
-        'photo',
+        'price',
+        'discount',
+        'stock',
+        'sku',
+        'category_id',
+        'image',
+        'rating',
+        'reviews_count',
+        'sold_count',
+        'view_count',
+        'is_active',
+        'specifications',
+        'weight',
+        'dimensions',
     ];
 
-    protected $appends = ['photo_url'];
+    protected $casts = [
+        'price' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'stock' => 'integer',
+        'rating' => 'decimal:1',
+        'reviews_count' => 'integer',
+        'sold_count' => 'integer',
+        'view_count' => 'integer',
+        'is_active' => 'boolean',
+        'specifications' => 'array',
+        'weight' => 'decimal:2',
+    ];
 
-    // Relations
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            $product->slug = Str::slug($product->name);
+        });
+
+        static::updating(function ($product) {
+            if ($product->isDirty('name')) {
+                $product->slug = Str::slug($product->name);
+            }
+        });
+    }
+
+    /**
+     * Get the category that owns the product.
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get the images for the product.
+     */
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
+    /**
+     * Get the reviews for the product.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the carts that contain this product.
+     */
     public function carts()
     {
         return $this->hasMany(Cart::class);
     }
 
+    /**
+     * Get the transaction items for this product.
+     */
     public function transactionItems()
     {
         return $this->hasMany(TransactionItem::class);
     }
 
-    // Accessors
-    public function getPhotoUrlAttribute()
+    /**
+     * Get the final price after discount.
+     */
+    public function getFinalPriceAttribute()
     {
-        if ($this->photo) {
-            return asset('storage/products/' . $this->photo);
+        if ($this->discount > 0) {
+            return $this->price - ($this->price * $this->discount / 100);
         }
-        return null;
+        return $this->price;
     }
 
-    public function getFormattedPriceAttribute()
+    /**
+     * Check if product is in stock.
+     */
+    public function getInStockAttribute()
     {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
+        return $this->stock > 0;
     }
 
-    // Methods
-    public function reduceStock($quantity)
+    /**
+     * Get discount amount.
+     */
+    public function getDiscountAmountAttribute()
     {
-        $this->stock -= $quantity;
-        $this->save();
+        if ($this->discount > 0) {
+            return $this->price * $this->discount / 100;
+        }
+        return 0;
     }
 
-    public function increaseStock($quantity)
+    /**
+     * Scope a query to only include active products.
+     */
+    public function scopeActive($query)
     {
-        $this->stock += $quantity;
-        $this->save();
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope a query to only include featured products.
+     */
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true)
+                    ->where('is_active', true);
+    }
+
+    /**
+     * Scope a query to only include products in stock.
+     */
+    public function scopeInStock($query)
+    {
+        return $query->where('stock', '>', 0);
+    }
+
+    /**
+     * Scope a query to only include products on sale.
+     */
+    public function scopeOnSale($query)
+    {
+        return $query->where('discount', '>', 0)
+                    ->where('is_active', true);
     }
 }

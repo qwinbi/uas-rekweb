@@ -1,420 +1,311 @@
 @extends('layouts.app')
 
-@section('title', 'Transaction History - BUNNYPOPS')
+@section('title', 'My Orders')
 
 @section('content')
-<div class="py-8">
-    <!-- Page Header -->
-    <div class="mb-8 text-center">
-        <h1 class="text-3xl md:text-4xl font-bold text-[#4D4C7D] mb-3">Transaction History</h1>
-        <p class="text-[#8E7AB5]">Track your orders and purchases</p>
-    </div>
-
-    @if($transactions->count() > 0)
-    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <!-- Transaction Filters -->
-        <div class="p-6 border-b border-[#F9DCC4]">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-4">
-                    <button class="px-4 py-2 rounded-lg bg-[#FF6F61] text-white font-bold">
-                        All Orders
-                    </button>
-                    <button class="px-4 py-2 rounded-lg bg-[#FCEFEA] text-[#4D4C7D] hover:bg-[#F9DCC4] transition-colors">
-                        Pending
-                    </button>
-                    <button class="px-4 py-2 rounded-lg bg-[#FCEFEA] text-[#4D4C7D] hover:bg-[#F9DCC4] transition-colors">
-                        Completed
-                    </button>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    <div class="relative">
-                        <input type="text" 
-                               placeholder="Search orders..." 
-                               class="pl-10 pr-4 py-2 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:outline-none">
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8E7AB5]"></i>
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">
+                        <i class="fas fa-history me-2"></i>My Orders
+                    </h2>
+                    <div class="text-muted">
+                        Total: <span class="fw-bold text-primary">12 Orders</span>
                     </div>
-                    
-                    <select class="px-4 py-2 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:outline-none text-[#4D4C7D]">
-                        <option>Last 30 days</option>
-                        <option>Last 3 months</option>
-                        <option>Last year</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Transactions List -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-[#FCEFEA]">
-                        <th class="text-left p-4 text-[#4D4C7D] font-bold">Order ID</th>
-                        <th class="text-left p-4 text-[#4D4C7D] font-bold">Date</th>
-                        <th class="text-left p-4 text-[#4D4C7D] font-bold">Items</th>
-                        <th class="text-left p-4 text-[#4D4C7D] font-bold">Total</th>
-                        <th class="text-left p-4 text-[#4D4C7D] font-bold">Status</th>
-                        <th class="text-left p-4 text-[#4D4C7D] font-bold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($transactions as $transaction)
-                    <tr class="border-b border-[#F9DCC4] hover:bg-[#FCEFEA]/50 transition-colors">
-                        <td class="p-4">
-                            <div class="font-bold text-[#4D4C7D]">{{ $transaction->invoice_number }}</div>
-                            <div class="text-sm text-[#8E7AB5]">#{{ $transaction->id }}</div>
-                        </td>
-                        
-                        <td class="p-4 text-[#4D4C7D]">
-                            {{ $transaction->created_at->format('d M Y') }}
-                            <div class="text-sm text-[#8E7AB5]">
-                                {{ $transaction->created_at->format('H:i') }}
-                            </div>
-                        </td>
-                        
-                        <td class="p-4">
-                            <div class="flex items-center">
-                                <div class="flex -space-x-2 mr-3">
-                                    @foreach($transaction->items->take(3) as $item)
-                                    <div class="w-8 h-8 rounded-full border-2 border-white bg-gradient-to-br from-[#F9DCC4] to-[#8E7AB5] flex items-center justify-center">
-                                        <i class="fas fa-box text-white text-xs"></i>
-                                    </div>
-                                    @endforeach
-                                    @if($transaction->items->count() > 3)
-                                    <div class="w-8 h-8 rounded-full border-2 border-white bg-[#4D4C7D] flex items-center justify-center">
-                                        <span class="text-white text-xs">+{{ $transaction->items->count() - 3 }}</span>
-                                    </div>
-                                    @endif
-                                </div>
-                                <span class="text-[#4D4C7D]">{{ $transaction->items->count() }} items</span>
-                            </div>
-                        </td>
-                        
-                        <td class="p-4">
-                            <div class="text-xl font-bold text-[#FF6F61]">
-                                Rp {{ number_format($transaction->total, 0, ',', '.') }}
-                            </div>
-                        </td>
-                        
-                        <td class="p-4">
-                            @if($transaction->status == 'completed')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 font-bold text-sm">
-                                <i class="fas fa-check-circle mr-1"></i> Completed
-                            </span>
-                            @elseif($transaction->status == 'processing')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-bold text-sm">
-                                <i class="fas fa-sync-alt mr-1"></i> Processing
-                            </span>
-                            @elseif($transaction->status == 'waiting_payment')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 font-bold text-sm">
-                                <i class="fas fa-clock mr-1"></i> Waiting Payment
-                            </span>
-                            @else
-                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-800 font-bold text-sm">
-                                <i class="fas fa-hourglass-half mr-1"></i> Pending
-                            </span>
-                            @endif
-                        </td>
-                        
-                        <td class="p-4">
-                            <div class="flex gap-2">
-                                <a href="{{ route('transactions.show', $transaction->id) }}" 
-                                   class="w-10 h-10 bg-[#FCEFEA] text-[#4D4C7D] rounded-lg flex items-center justify-center hover:bg-[#F9DCC4] transition-colors">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                
-                                @if($transaction->status == 'pending' || $transaction->status == 'waiting_payment')
-                                <button onclick="showUploadModal({{ $transaction->id }})"
-                                        class="w-10 h-10 bg-[#8E7AB5] text-white rounded-lg flex items-center justify-center hover:bg-[#4D4C7D] transition-colors">
-                                    <i class="fas fa-upload"></i>
-                                </button>
-                                @endif
-                                
-                                <a href="#" 
-                                   class="w-10 h-10 bg-[#FCEFEA] text-[#4D4C7D] rounded-lg flex items-center justify-center hover:bg-[#F9DCC4] transition-colors">
-                                    <i class="fas fa-print"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        @if($transactions->hasPages())
-        <div class="p-6 border-t border-[#F9DCC4]">
-            <div class="flex justify-between items-center">
-                <div class="text-[#4D4C7D]">
-                    Showing {{ $transactions->firstItem() }} to {{ $transactions->lastItem() }} of {{ $transactions->total() }} orders
                 </div>
                 
-                <div class="flex gap-2">
-                    @if($transactions->onFirstPage())
-                        <span class="px-4 py-2 rounded-lg bg-[#FCEFEA] text-[#8E7AB5] cursor-not-allowed">
-                            <i class="fas fa-chevron-left"></i>
-                        </span>
-                    @else
-                        <a href="{{ $transactions->previousPageUrl() }}" 
-                           class="px-4 py-2 rounded-lg bg-white text-[#4D4C7D] hover:bg-[#FCEFEA] transition-colors shadow-sm">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                    @endif
-                    
-                    @foreach(range(1, $transactions->lastPage()) as $page)
-                        @if($page == $transactions->currentPage())
-                            <span class="px-4 py-2 rounded-lg bg-[#FF6F61] text-white font-bold">
-                                {{ $page }}
-                            </span>
-                        @else
-                            <a href="{{ $transactions->url($page) }}" 
-                               class="px-4 py-2 rounded-lg bg-white text-[#4D4C7D] hover:bg-[#FCEFEA] transition-colors shadow-sm">
-                                {{ $page }}
-                            </a>
-                        @endif
-                    @endforeach
-                    
-                    @if($transactions->hasMorePages())
-                        <a href="{{ $transactions->nextPageUrl() }}" 
-                           class="px-4 py-2 rounded-lg bg-white text-[#4D4C7D] hover:bg-[#FCEFEA] transition-colors shadow-sm">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    @else
-                        <span class="px-4 py-2 rounded-lg bg-[#FCEFEA] text-[#8E7AB5] cursor-not-allowed">
-                            <i class="fas fa-chevron-right"></i>
-                        </span>
-                    @endif
-                </div>
-            </div>
-        </div>
-        @endif
-    </div>
-    @else
-    <!-- Empty State -->
-    <div class="text-center py-16">
-        <div class="w-40 h-40 mx-auto mb-6">
-            <div class="relative w-full h-full">
-                <div class="absolute inset-0 bg-gradient-to-br from-[#F9DCC4] to-[#FCEFEA] rounded-full animate-pulse"></div>
-                <div class="absolute inset-10 bg-white rounded-full flex items-center justify-center">
-                    <i class="fas fa-receipt text-[#8E7AB5] text-5xl"></i>
-                </div>
-            </div>
-        </div>
-        
-        <h3 class="text-2xl font-bold text-[#4D4C7D] mb-3">No Orders Yet</h3>
-        <p class="text-[#8E7AB5] mb-8 max-w-md mx-auto">
-            You haven't made any purchases yet. Start shopping to see your orders here!
-        </p>
-        
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{{ route('shop') }}" 
-               class="bg-gradient-to-r from-[#FF6F61] to-[#8E7AB5] text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-xl inline-flex items-center justify-center">
-                <i class="fas fa-shopping-bag mr-3"></i>
-                Start Shopping
-            </a>
-            
-            <a href="{{ route('home') }}" 
-               class="bg-[#FCEFEA] text-[#4D4C7D] px-8 py-3 rounded-xl font-bold hover:bg-[#F9DCC4] transition-colors shadow-lg hover:shadow-xl inline-flex items-center justify-center">
-                <i class="fas fa-home mr-3"></i>
-                Back to Home
-            </a>
-        </div>
-    </div>
-    @endif
-</div>
-
-<!-- Upload Payment Proof Modal -->
-<div id="upload-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/50"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div class="p-6 border-b border-[#F9DCC4]">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold text-[#4D4C7D]">Upload Payment Proof</h3>
-                    <button onclick="closeUploadModal()" class="text-[#8E7AB5] hover:text-[#FF6F61] text-xl">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-6">
-                <form id="upload-form" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" id="transaction-id" name="transaction_id">
-                    
-                    <div class="mb-6">
-                        <p class="text-[#4D4C7D] mb-4">Please upload proof of payment for your order.</p>
-                        
-                        <div class="border-2 border-dashed border-[#F9DCC4] rounded-xl p-6 text-center hover:border-[#8E7AB5] transition-colors">
-                            <input type="file" 
-                                   id="payment_proof_modal" 
-                                   name="payment_proof"
-                                   accept="image/*"
-                                   class="hidden"
-                                   onchange="previewModalImage(this)">
-                            <div id="image-preview-modal" class="hidden mb-4">
-                                <img id="preview-image-modal" class="max-w-full max-h-48 mx-auto rounded-lg">
-                                <button type="button" 
-                                        onclick="removeModalImage()"
-                                        class="mt-2 text-[#FF6F61] hover:text-red-700">
-                                    <i class="fas fa-trash mr-1"></i> Remove image
-                                </button>
-                            </div>
-                            <div id="upload-prompt-modal">
-                                <i class="fas fa-cloud-upload-alt text-4xl text-[#8E7AB5] mb-3"></i>
-                                <p class="text-[#4D4C7D] mb-2">Click to upload payment proof</p>
-                                <p class="text-sm text-[#8E7AB5] mb-4">Supported: JPG, PNG (Max: 2MB)</p>
-                                <label for="payment_proof_modal" 
-                                       class="inline-block bg-[#FCEFEA] text-[#4D4C7D] px-6 py-2 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors cursor-pointer">
-                                    <i class="fas fa-image mr-2"></i> Choose File
-                                </label>
-                            </div>
+                <!-- Filters -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option>All Status</option>
+                            <option>Pending</option>
+                            <option>Processing</option>
+                            <option>Shipped</option>
+                            <option>Delivered</option>
+                            <option>Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option>Last 30 days</option>
+                            <option>Last 3 months</option>
+                            <option>Last 6 months</option>
+                            <option>Last year</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search orders...">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="flex gap-3">
-                        <button type="button" 
-                                onclick="closeUploadModal()"
-                                class="flex-1 bg-[#FCEFEA] text-[#4D4C7D] py-3 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors">
-                            Cancel
-                        </button>
-                        <button type="submit" 
-                                class="flex-1 bg-[#FF6F61] text-white py-3 rounded-lg font-bold hover:bg-[#FF8A80] transition-colors">
-                            Upload
-                        </button>
-                    </div>
-                </form>
+                </div>
+                
+                <!-- Orders Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for($i = 1; $i <= 8; $i++)
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">#ORD{{ 1000 + $i }}</div>
+                                    <small class="text-muted">3 items</small>
+                                </td>
+                                <td>
+                                    <div>{{ now()->subDays($i)->format('d M Y') }}</div>
+                                    <small class="text-muted">{{ now()->subDays($i)->format('H:i') }}</small>
+                                </td>
+                                <td>
+                                    <div class="d-flex">
+                                        @for($j = 1; $j <= min($i, 3); $j++)
+                                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80" 
+                                             class="rounded border me-1" width="40">
+                                        @endfor
+                                        @if($i > 3)
+                                        <div class="more-items">
+                                            +{{ $i - 3 }}
+                                        </div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="fw-bold">
+                                    Rp {{ number_format(rand(50000, 500000), 0, ',', '.') }}
+                                </td>
+                                <td>
+                                    @php
+                                        $statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+                                        $status = $statuses[array_rand($statuses)];
+                                        $colors = [
+                                            'pending' => 'warning',
+                                            'processing' => 'info',
+                                            'shipped' => 'primary',
+                                            'delivered' => 'success',
+                                            'cancelled' => 'danger'
+                                        ];
+                                    @endphp
+                                    <span class="badge bg-{{ $colors[$status] }}">
+                                        {{ ucfirst($status) }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ route('transactions.show', $i) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if($status == 'delivered')
+                                        <button class="btn btn-sm btn-outline-success" 
+                                                onclick="reviewOrder({{ $i }})">
+                                            <i class="fas fa-star"></i>
+                                        </button>
+                                        @endif
+                                        @if($status == 'pending')
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                onclick="cancelOrder({{ $i }})">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                            @endfor
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
+        </div>
+        
+        <!-- Order Statistics -->
+        <div class="row">
+            @foreach([
+                ['icon' => 'fas fa-clock', 'title' => 'Pending', 'count' => 2, 'color' => 'warning'],
+                ['icon' => 'fas fa-cog', 'title' => 'Processing', 'count' => 1, 'color' => 'info'],
+                ['icon' => 'fas fa-truck', 'title' => 'Shipped', 'count' => 3, 'color' => 'primary'],
+                ['icon' => 'fas fa-check-circle', 'title' => 'Delivered', 'count' => 5, 'color' => 'success']
+            ] as $stat)
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-wrapper mb-3">
+                            <i class="{{ $stat['icon'] }} fa-2x text-{{ $stat['color'] }}"></i>
+                        </div>
+                        <h3 class="fw-bold mb-2">{{ $stat['count'] }}</h3>
+                        <p class="text-muted mb-0">{{ $stat['title'] }} Orders</p>
+                    </div>
+                </div>
+            </div>
+            @endforeach
         </div>
     </div>
 </div>
 
 <script>
-    // Show upload modal
-    function showUploadModal(transactionId) {
-        document.getElementById('transaction-id').value = transactionId;
-        document.getElementById('upload-modal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    // Close upload modal
-    function closeUploadModal() {
-        document.getElementById('upload-modal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
-        resetModalForm();
-    }
-    
-    // Reset modal form
-    function resetModalForm() {
-        document.getElementById('upload-form').reset();
-        document.getElementById('image-preview-modal').style.display = 'none';
-        document.getElementById('upload-prompt-modal').style.display = 'block';
-    }
-    
-    // Image preview for modal
-    function previewModalImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            const maxSize = 2 * 1024 * 1024; // 2MB
-            
-            if (input.files[0].size > maxSize) {
-                alert('File size must be less than 2MB');
-                input.value = '';
-                return;
+    function reviewOrder(orderId) {
+        Swal.fire({
+            title: 'Review Order',
+            html: `
+                <div class="text-center mb-3">
+                    <div class="rating mb-3">
+                        ${Array(5).fill().map((_, i) => `
+                            <i class="fas fa-star text-warning" style="font-size: 2rem; cursor: pointer;" 
+                               onclick="setRating(${i + 1})" id="star-${i + 1}"></i>
+                        `).join('')}
+                    </div>
+                    <textarea id="reviewText" class="form-control" rows="3" 
+                              placeholder="Share your experience..."></textarea>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Submit Review',
+            preConfirm: () => {
+                const rating = document.querySelectorAll('.fa-star.active').length;
+                const review = document.getElementById('reviewText').value;
+                
+                if (rating === 0) {
+                    Swal.showValidationMessage('Please select a rating');
+                    return false;
+                }
+                
+                return { rating, review };
             }
-            
-            reader.onload = function(e) {
-                document.getElementById('preview-image-modal').src = e.target.result;
-                document.getElementById('image-preview-modal').style.display = 'block';
-                document.getElementById('upload-prompt-modal').style.display = 'none';
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Thank You!',
+                    'Your review has been submitted.',
+                    'success'
+                );
             }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
-    function removeModalImage() {
-        document.getElementById('payment_proof_modal').value = '';
-        document.getElementById('image-preview-modal').style.display = 'none';
-        document.getElementById('upload-prompt-modal').style.display = 'block';
-    }
-    
-    // Handle form submission
-    document.getElementById('upload-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const transactionId = document.getElementById('transaction-id').value;
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
-        // Show loading
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Uploading...';
-        submitBtn.disabled = true;
-        
-        fetch(`/transactions/${transactionId}/upload-proof`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': token
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                showNotification('Payment proof uploaded successfully!', 'success');
-                closeUploadModal();
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showNotification(data.message || 'Error uploading proof', 'error');
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('Error uploading proof', 'error');
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
         });
-    });
+    }
     
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-20 right-4 z-50 px-6 py-3 rounded-lg shadow-xl animate-slide-in ${
-            type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 
-            'bg-red-100 text-red-800 border border-red-200'
-        }`;
-        notification.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-3"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => notification.remove(), 500);
-        }, 3000);
+    function setRating(rating) {
+        // Reset all stars
+        document.querySelectorAll('.fa-star').forEach((star, index) => {
+            star.classList.remove('active');
+            if (index < rating) {
+                star.classList.add('active');
+            }
+        });
+    }
+    
+    function cancelOrder(orderId) {
+        Swal.fire({
+            title: 'Cancel Order?',
+            text: "Are you sure you want to cancel this order?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Cancelled!',
+                    'Your order has been cancelled.',
+                    'success'
+                );
+            }
+        });
     }
 </script>
 
 <style>
-    .animate-slide-in {
-        animation: slideIn 0.3s ease-out;
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        color: #6c757d;
     }
     
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+    .table tbody tr {
+        transition: all 0.2s ease;
+        vertical-align: middle;
+    }
+    
+    .table tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+    
+    .more-items {
+        width: 40px;
+        height: 40px;
+        background: #e9ecef;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #6c757d;
+    }
+    
+    .icon-wrapper {
+        width: 60px;
+        height: 60px;
+        background: rgba(67, 97, 238, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .btn-group .btn {
+        border-radius: 4px !important;
+        margin-right: 4px;
+    }
+    
+    .btn-group .btn:last-child {
+        margin-right: 0;
+    }
+    
+    .rating .fa-star {
+        transition: all 0.2s ease;
+    }
+    
+    .rating .fa-star:hover {
+        transform: scale(1.2);
+    }
+    
+    .rating .fa-star.active {
+        color: #ffc107;
+        text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
     }
 </style>
 @endsection

@@ -1,393 +1,221 @@
 @extends('layouts.app')
 
-@section('title', 'Shopping Cart - BUNNYPOPS')
+@section('title', 'Shopping Cart')
 
 @section('content')
-<div class="py-8">
-    <!-- Page Header -->
-    <div class="mb-8 text-center">
-        <h1 class="text-3xl md:text-4xl font-bold text-[#4D4C7D] mb-3">Your Shopping Cart</h1>
-        <p class="text-[#8E7AB5]">Review your items and proceed to checkout</p>
-    </div>
-
-    @if($cartItems->count() > 0)
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Cart Items -->
-        <div class="lg:col-span-2">
-            <!-- Cart Header -->
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-[#4D4C7D]">
-                        {{ $cartItems->count() }} {{ Str::plural('item', $cartItems->count()) }} in Cart
+<div class="row">
+    <!-- Cart Items -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">
+                        <i class="fas fa-shopping-cart text-primary me-2"></i>Shopping Cart
                     </h2>
-                    <form action="{{ route('cart.destroy', 'clear') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear your cart?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-[#FF6F61] hover:text-red-700 transition-colors flex items-center">
-                            <i class="fas fa-trash-alt mr-2"></i>
-                            Clear Cart
-                        </button>
-                    </form>
+                    <span class="badge bg-primary">{{ $cartCount ?? 3 }} Items</span>
                 </div>
                 
-                <!-- Cart Items List -->
-                <div class="space-y-4">
-                    @foreach($cartItems as $cartItem)
-                    <div class="flex flex-col sm:flex-row gap-4 p-4 border border-[#F9DCC4] rounded-xl hover:border-[#8E7AB5] transition-colors">
-                        <!-- Product Image -->
-                        <div class="sm:w-24 h-24 flex-shrink-0">
-                            @if($cartItem->product->photo)
-                                <img src="{{ asset('storage/products/' . $cartItem->product->photo) }}" 
-                                     alt="{{ $cartItem->product->name }}" 
-                                     class="w-full h-full object-cover rounded-lg">
-                            @else
-                                <div class="w-full h-full bg-gradient-to-br from-[#F9DCC4] to-[#8E7AB5] rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-box text-white text-2xl opacity-50"></i>
-                                </div>
+                @for($i = 1; $i <= 3; $i++)
+                <div class="cart-item border-bottom pb-4 mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" 
+                                 class="img-fluid rounded" alt="Product {{ $i }}">
+                        </div>
+                        <div class="col-md-5">
+                            <h6 class="fw-bold mb-1">Product Name {{ $i }}</h6>
+                            <p class="text-muted small mb-2">High quality product with excellent features</p>
+                            <div class="text-warning small">
+                                @for($j = 1; $j <= 5; $j++)
+                                <i class="fas fa-star"></i>
+                                @endfor
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group input-group-sm">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="text" class="form-control text-center" value="{{ $i }}">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <h6 class="fw-bold text-primary mb-0">Rp {{ number_format(rand(50000, 500000), 0, ',', '.') }}</h6>
+                            @if($i == 1)
+                            <small class="text-muted text-decoration-line-through">Rp 599,000</small>
                             @endif
                         </div>
-                        
-                        <!-- Product Info -->
-                        <div class="flex-grow">
-                            <div class="flex justify-between">
-                                <div>
-                                    <h3 class="font-bold text-[#4D4C7D] mb-1">{{ $cartItem->product->name }}</h3>
-                                    <p class="text-[#8E7AB5] text-sm mb-2">
-                                        Stock: {{ $cartItem->product->stock }}
-                                    </p>
-                                    <div class="text-xl font-bold text-[#FF6F61]">
-                                        Rp {{ number_format($cartItem->product->price, 0, ',', '.') }}
-                                    </div>
-                                </div>
-                                
-                                <!-- Quantity Controls -->
-                                <div class="flex flex-col items-end">
-                                    <form action="{{ route('cart.update', $cartItem->id) }}" method="POST" class="mb-2">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="flex items-center">
-                                            <button type="button" 
-                                                    onclick="updateQuantity({{ $cartItem->id }}, -1)"
-                                                    class="w-8 h-8 bg-[#FCEFEA] text-[#4D4C7D] rounded-l-lg hover:bg-[#F9DCC4] transition-colors">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                            <input type="number" 
-                                                   id="qty-{{ $cartItem->id }}"
-                                                   value="{{ $cartItem->quantity }}" 
-                                                   min="1" 
-                                                   max="{{ $cartItem->product->stock }}"
-                                                   class="w-12 h-8 text-center border-y border-[#F9DCC4] text-[#4D4C7D] focus:outline-none"
-                                                   onchange="updateQuantityInput({{ $cartItem->id }}, this.value)">
-                                            <button type="button" 
-                                                    onclick="updateQuantity({{ $cartItem->id }}, 1)"
-                                                    class="w-8 h-8 bg-[#FCEFEA] text-[#4D4C7D] rounded-r-lg hover:bg-[#F9DCC4] transition-colors">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-                                    
-                                    <!-- Remove Button -->
-                                    <form action="{{ route('cart.destroy', $cartItem->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="text-[#FF6F61] hover:text-red-700 transition-colors flex items-center text-sm">
-                                            <i class="fas fa-trash mr-1"></i>
-                                            Remove
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                            
-                            <!-- Subtotal -->
-                            <div class="mt-3 pt-3 border-t border-[#F9DCC4] flex justify-between items-center">
-                                <span class="text-[#4D4C7D]">Subtotal:</span>
-                                <span class="text-xl font-bold text-[#4D4C7D]">
-                                    Rp {{ number_format($cartItem->quantity * $cartItem->product->price, 0, ',', '.') }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            
-            <!-- Continue Shopping -->
-            <div class="flex justify-between items-center">
-                <a href="{{ route('shop') }}" 
-                   class="inline-flex items-center text-[#8E7AB5] hover:text-[#FF6F61] transition-colors">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Continue Shopping
-                </a>
-                
-                <!-- Update Cart Button -->
-                <button onclick="updateAllQuantities()" 
-                        class="bg-[#FCEFEA] text-[#4D4C7D] px-6 py-2 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors">
-                    <i class="fas fa-sync-alt mr-2"></i>
-                    Update Cart
-                </button>
-            </div>
-        </div>
-
-        <!-- Order Summary -->
-        <div class="lg:col-span-1">
-            <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-                <h2 class="text-xl font-bold text-[#4D4C7D] mb-6">Order Summary</h2>
-                
-                <!-- Summary Details -->
-                <div class="space-y-4 mb-6">
-                    <div class="flex justify-between">
-                        <span class="text-[#4D4C7D]">Subtotal</span>
-                        <span class="text-[#4D4C7D] font-medium">
-                            Rp {{ number_format($total, 0, ',', '.') }}
-                        </span>
-                    </div>
-                    
-                    <div class="flex justify-between">
-                        <span class="text-[#4D4C7D]">Shipping</span>
-                        <span class="text-[#4D4C7D] font-medium">
-                            Rp {{ number_format(10000, 0, ',', '.') }}
-                        </span>
-                    </div>
-                    
-                    <div class="flex justify-between">
-                        <span class="text-[#4D4C7D]">Tax</span>
-                        <span class="text-[#4D4C7D] font-medium">
-                            Rp {{ number_format($total * 0.1, 0, ',', '.') }}
-                        </span>
-                    </div>
-                    
-                    <div class="border-t border-[#F9DCC4] pt-4">
-                        <div class="flex justify-between">
-                            <span class="text-lg font-bold text-[#4D4C7D]">Total</span>
-                            <span class="text-2xl font-bold text-[#FF6F61]">
-                                Rp {{ number_format($total + 10000 + ($total * 0.1), 0, ',', '.') }}
-                            </span>
-                        </div>
-                        <p class="text-[#8E7AB5] text-sm mt-1">Including shipping and tax</p>
-                    </div>
-                </div>
-                
-                <!-- Checkout Button -->
-                <a href="{{ route('checkout') }}" 
-                   class="block w-full bg-gradient-to-r from-[#FF6F61] to-[#8E7AB5] text-white py-4 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-xl text-center mb-4">
-                    <i class="fas fa-lock mr-2"></i>
-                    Proceed to Checkout
-                </a>
-                
-                <!-- Payment Methods -->
-                <div class="border-t border-[#F9DCC4] pt-6">
-                    <h3 class="font-bold text-[#4D4C7D] mb-3">We Accept</h3>
-                    <div class="flex gap-3">
-                        <div class="bg-[#FCEFEA] p-3 rounded-lg">
-                            <i class="fab fa-cc-visa text-2xl text-[#4D4C7D]"></i>
-                        </div>
-                        <div class="bg-[#FCEFEA] p-3 rounded-lg">
-                            <i class="fab fa-cc-mastercard text-2xl text-[#4D4C7D]"></i>
-                        </div>
-                        <div class="bg-[#FCEFEA] p-3 rounded-lg">
-                            <i class="fas fa-qrcode text-2xl text-[#4D4C7D]"></i>
+                        <div class="col-md-1 text-end">
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
+                @endfor
                 
-                <!-- Security Notice -->
-                <div class="mt-6 p-4 bg-[#FCEFEA] rounded-lg">
-                    <div class="flex items-start">
-                        <i class="fas fa-shield-alt text-[#8E7AB5] mt-1 mr-3"></i>
-                        <div>
-                            <h4 class="font-bold text-[#4D4C7D] text-sm mb-1">Secure Checkout</h4>
-                            <p class="text-[#8E7AB5] text-xs">
-                                Your payment information is encrypted and secure.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Promo Code -->
-            <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
-                <h3 class="font-bold text-[#4D4C7D] mb-4">Have a Promo Code?</h3>
-                <div class="flex">
-                    <input type="text" 
-                           placeholder="Enter promo code" 
-                           class="flex-grow px-4 py-3 rounded-l-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:outline-none">
-                    <button class="bg-[#8E7AB5] text-white px-6 py-3 rounded-r-lg font-bold hover:bg-[#4D4C7D] transition-colors">
-                        Apply
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{{ route('shop') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                    <button class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Clear Cart
                     </button>
                 </div>
             </div>
         </div>
-    </div>
-    @else
-    <!-- Empty Cart -->
-    <div class="text-center py-16">
-        <div class="w-40 h-40 mx-auto mb-6">
-            <div class="relative w-full h-full">
-                <div class="absolute inset-0 bg-gradient-to-br from-[#F9DCC4] to-[#FCEFEA] rounded-full animate-pulse"></div>
-                <div class="absolute inset-10 bg-white rounded-full flex items-center justify-center">
-                    <i class="fas fa-shopping-cart text-[#8E7AB5] text-5xl"></i>
+        
+        <!-- Shipping Info -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Shipping Information</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" placeholder="Enter your full name">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" placeholder="Enter phone number">
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" rows="3" placeholder="Enter full address"></textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-control" placeholder="Enter city">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Postal Code</label>
+                        <input type="text" class="form-control" placeholder="Enter postal code">
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <h3 class="text-2xl font-bold text-[#4D4C7D] mb-3">Your Cart is Empty</h3>
-        <p class="text-[#8E7AB5] mb-8 max-w-md mx-auto">
-            Looks like you haven't added any cute products to your cart yet. 
-            Start shopping to fill it with adorable items!
-        </p>
-        
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{{ route('shop') }}" 
-               class="bg-gradient-to-r from-[#FF6F61] to-[#8E7AB5] text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-xl inline-flex items-center justify-center">
-                <i class="fas fa-shopping-bag mr-3"></i>
-                Start Shopping
-            </a>
-            
-            <a href="{{ route('home') }}" 
-               class="bg-[#FCEFEA] text-[#4D4C7D] px-8 py-3 rounded-xl font-bold hover:bg-[#F9DCC4] transition-colors shadow-lg hover:shadow-xl inline-flex items-center justify-center">
-                <i class="fas fa-home mr-3"></i>
-                Back to Home
-            </a>
+    </div>
+    
+    <!-- Order Summary -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Order Summary</h5>
+                
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal (3 items)</span>
+                    <span class="fw-semibold">Rp 1,497,000</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Shipping</span>
+                    <span class="fw-semibold text-success">FREE</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Tax</span>
+                    <span class="fw-semibold">Rp 74,850</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Discount</span>
+                    <span class="fw-semibold text-danger">-Rp 100,000</span>
+                </div>
+                
+                <hr class="my-3">
+                
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fw-bold">Total</span>
+                    <span class="fw-bold text-primary h4">Rp 1,471,850</span>
+                </div>
+                
+                <a href="{{ route('checkout') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                    <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                </a>
+                
+                <!-- Payment Methods -->
+                <div class="border-top pt-4">
+                    <h6 class="fw-bold mb-3">Payment Methods</h6>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="border rounded p-3 text-center">
+                                <i class="fas fa-credit-card fa-2x text-primary mb-2"></i>
+                                <small class="d-block">Credit Card</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-3 text-center">
+                                <i class="fas fa-qrcode fa-2x text-primary mb-2"></i>
+                                <small class="d-block">QRIS</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-3 text-center">
+                                <i class="fas fa-university fa-2x text-primary mb-2"></i>
+                                <small class="d-block">Bank Transfer</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-3 text-center">
+                                <i class="fas fa-wallet fa-2x text-primary mb-2"></i>
+                                <small class="d-block">E-Wallet</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Promo Code -->
+                <div class="border-top pt-4">
+                    <h6 class="fw-bold mb-3">Promo Code</h6>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Enter promo code">
+                        <button class="btn btn-outline-primary">Apply</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    @endif
 </div>
 
-<script>
-    // Update quantity for a specific cart item
-    function updateQuantity(cartId, change) {
-        const input = document.getElementById(`qty-${cartId}`);
-        let currentValue = parseInt(input.value);
-        const maxStock = parseInt(input.max);
-        
-        let newValue = currentValue + change;
-        if (newValue < 1) newValue = 1;
-        if (newValue > maxStock) newValue = maxStock;
-        
-        input.value = newValue;
-        
-        // Update cart via AJAX
-        updateCartItem(cartId, newValue);
-    }
-    
-    // Update quantity from input change
-    function updateQuantityInput(cartId, value) {
-        const input = document.getElementById(`qty-${cartId}`);
-        const maxStock = parseInt(input.max);
-        
-        let newValue = parseInt(value);
-        if (isNaN(newValue) || newValue < 1) newValue = 1;
-        if (newValue > maxStock) newValue = maxStock;
-        
-        input.value = newValue;
-        updateCartItem(cartId, newValue);
-    }
-    
-    // Update all quantities at once
-    function updateAllQuantities() {
-        const cartItems = document.querySelectorAll('[id^="qty-"]');
-        cartItems.forEach(input => {
-            const cartId = input.id.replace('qty-', '');
-            const quantity = input.value;
-            updateCartItem(cartId, quantity, true);
-        });
-    }
-    
-    // AJAX cart update
-    function updateCartItem(cartId, quantity, showNotification = false) {
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
-        fetch(`/cart/update/${cartId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                qty: quantity
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                if (showNotification) {
-                    showNotificationMessage('Cart updated successfully!', 'success');
-                }
-                // Update cart counter
-                updateCartCounter();
-                // Reload page to update totals
-                setTimeout(() => location.reload(), 500);
-            } else {
-                showNotificationMessage(data.message || 'Error updating cart', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotificationMessage('Error updating cart', 'error');
-        });
-    }
-    
-    // Update cart counter
-    function updateCartCounter() {
-        fetch('/cart/count')
-            .then(response => response.json())
-            .then(data => {
-                const cartCounter = document.getElementById('cart-counter');
-                if (cartCounter) {
-                    cartCounter.textContent = data.count;
-                    if (data.count > 0) {
-                        cartCounter.classList.remove('hidden');
-                    } else {
-                        cartCounter.classList.add('hidden');
-                    }
-                }
-            });
-    }
-    
-    // Show notification message
-    function showNotificationMessage(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-20 right-4 z-50 px-6 py-3 rounded-lg shadow-xl animate-slide-in ${
-            type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 
-            'bg-red-100 text-red-800 border border-red-200'
-        }`;
-        notification.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-3"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => notification.remove(), 500);
-        }, 3000);
-    }
-</script>
-
 <style>
-    .animate-slide-in {
-        animation: slideIn 0.3s ease-out;
+    .cart-item {
+        transition: all 0.3s ease;
     }
     
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+    .cart-item:hover {
+        background-color: rgba(67, 97, 238, 0.02);
     }
     
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+    .input-group.input-group-sm {
+        width: 120px;
+    }
+    
+    .input-group.input-group-sm .btn {
+        width: 30px;
+        padding: 0.25rem;
+    }
+    
+    .sticky-top {
+        z-index: 1;
     }
 </style>
+
+<script>
+    // Quantity controls for cart items
+    document.querySelectorAll('.cart-item .input-group .btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            let value = parseInt(input.value);
+            
+            if (this.textContent.includes('minus')) {
+                if (value > 1) {
+                    input.value = value - 1;
+                }
+            } else {
+                input.value = value + 1;
+            }
+            
+            // In real app, update cart via AJAX
+        });
+    });
+</script>
 @endsection

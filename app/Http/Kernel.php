@@ -46,5 +46,6 @@ class Kernel extends HttpKernel
         'api.auth' => \App\Http\Middleware\ApiAuthMiddleware::class,
         'admin.api' => \App\Http\Middleware\AdminMiddleware::class,
         'guest.api' => \App\Http\Middleware\GuestMiddleware::class,
+        'ensure.variables' => \App\Http\Middleware\EnsureVariablesExist::class,
     ];
 }
