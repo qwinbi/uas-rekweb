@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Toko Online') - {{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('title', 'BUNNYPOPS') - {{ config('app.name', 'BUNNYPOPS') }}</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,22 +12,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --accent-color: #4cc9f0;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --success-color: #4caf50;
-            --warning-color: #ff9800;
-            --danger-color: #f44336;
+            --burgundy: #6C0820;
+            --cherry-blossom: #F2AEBC;
+            --misty-rose: #F2DCDB;
+            --silver-lake: #5A86CB;
+            --lapis-lazuli: #3D5D91;
+            --dark-burgundy: #5A061A;
+            --light-cherry: #F8C8D4;
+            --light-blue: #E8EEF7;
         }
         
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
+            background-color: var(--misty-rose);
             color: #333;
             min-height: 100vh;
             display: flex;
@@ -35,19 +36,44 @@
         }
         
         .navbar-brand {
+            font-family: 'Quicksand', sans-serif;
             font-weight: 700;
-            color: var(--primary-color) !important;
+            color: var(--burgundy) !important;
+            font-size: 1.5rem;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #ffffff, #f9f9f9) !important;
+            box-shadow: 0 2px 15px rgba(108, 8, 32, 0.1);
         }
         
         .navbar-nav .nav-link {
             font-weight: 500;
             padding: 0.5rem 1rem;
             transition: all 0.3s ease;
+            color: var(--lapis-lazuli) !important;
         }
         
         .navbar-nav .nav-link:hover {
-            color: var(--primary-color) !important;
+            color: var(--burgundy) !important;
             transform: translateY(-2px);
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: var(--burgundy) !important;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 3px;
+            background-color: var(--cherry-blossom);
+            border-radius: 2px;
         }
         
         .main-content {
@@ -57,7 +83,7 @@
         }
         
         .footer {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--lapis-lazuli), var(--silver-lake));
             color: white;
             padding: 2rem 0;
             margin-top: auto;
@@ -66,27 +92,46 @@
         .card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 20px rgba(108, 8, 32, 0.08);
+            background: white;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            box-shadow: 0 10px 25px rgba(108, 8, 32, 0.12);
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--burgundy), var(--dark-burgundy));
             border: none;
             padding: 0.5rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 500;
             transition: all 0.3s ease;
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 5px 15px rgba(108, 8, 32, 0.3);
+            background: linear-gradient(135deg, var(--dark-burgundy), var(--burgundy));
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--cherry-blossom), var(--light-cherry));
+            border: none;
+            color: var(--burgundy);
+            font-weight: 500;
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--burgundy);
+            color: var(--burgundy);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--burgundy);
+            color: white;
         }
         
         .badge {
@@ -94,17 +139,89 @@
             padding: 0.35em 0.65em;
             font-weight: 500;
         }
+        
+        .badge-primary {
+            background-color: var(--burgundy) !important;
+        }
+        
+        .badge-secondary {
+            background-color: var(--cherry-blossom) !important;
+            color: var(--burgundy);
+        }
+        
+        .text-primary {
+            color: var(--burgundy) !important;
+        }
+        
+        .text-secondary {
+            color: var(--silver-lake) !important;
+        }
+        
+        .bg-primary {
+            background-color: var(--burgundy) !important;
+        }
+        
+        .bg-light {
+            background-color: var(--light-blue) !important;
+        }
+        
+        .border-primary {
+            border-color: var(--burgundy) !important;
+        }
+        
+        .page-title {
+            font-family: 'Quicksand', sans-serif;
+            color: var(--burgundy);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--burgundy), var(--cherry-blossom));
+            border-radius: 2px;
+        }
+        
+        .category-card {
+            background: linear-gradient(135deg, white, #fefefe);
+            border: 2px solid transparent;
+        }
+        
+        .category-card:hover {
+            border-color: var(--cherry-blossom);
+            background: linear-gradient(135deg, white, #fff5f7);
+        }
+        
+        .product-card {
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .product-card:hover {
+            border-color: var(--cherry-blossom);
+        }
+        
+        .cart-badge {
+            background: linear-gradient(135deg, var(--cherry-blossom), var(--light-cherry));
+            color: var(--burgundy);
+            font-weight: 600;
+        }
     </style>
     
     @stack('styles')
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <nav class="navbar navbar-expand-lg navbar-light py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-                <i class="fas fa-store me-2"></i>
-                <span>{{ config('app.name', 'Toko Online') }}</span>
+                <i class="fas fa-bunny me-2" style="color: var(--burgundy);"></i>
+                <span>BUNNYPOPS</span>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -134,7 +251,7 @@
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ route('cart') }}">
                             <i class="fas fa-shopping-cart"></i>
-                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">
+                            <span class="cart-badge badge rounded-pill position-absolute top-0 start-100 translate-middle">
                                 {{ auth()->check() ? auth()->user()->carts()->count() : 0 }}
                             </span>
                         </a>
@@ -150,16 +267,16 @@
                         @else
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->is('transactions*') ? 'active' : '' }}" href="{{ route('transactions.index') }}">
-                                    <i class="fas fa-history me-1"></i> Transaksi
+                                    <i class="fas fa-history me-1"></i> Orders
                                 </a>
                             </li>
                         @endif
                         
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i> {{ Auth::user()->name }}
+                                <i class="fas fa-user me-1" style="color: var(--silver-lake);"></i> {{ Auth::user()->name }}
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -200,10 +317,10 @@
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <h5 class="mb-3">
-                        <i class="fas fa-store me-2"></i>
-                        {{ config('app.name', 'Toko Online') }}
+                        <i class="fas fa-bunny me-2"></i>
+                        BUNNYPOPS
                     </h5>
-                    <p class="mb-0">Belanja online mudah, aman, dan terpercaya. Kami menyediakan berbagai produk berkualitas dengan harga terbaik.</p>
+                    <p class="mb-0">Your favorite online shop for quality products. Experience shopping with style and comfort.</p>
                 </div>
                 <div class="col-md-4 mb-4">
                     <h5 class="mb-3">Quick Links</h5>
@@ -211,14 +328,14 @@
                         <li><a href="{{ url('/') }}" class="text-white text-decoration-none">Home</a></li>
                         <li><a href="{{ route('shop') }}" class="text-white text-decoration-none">Shop</a></li>
                         <li><a href="{{ route('about') }}" class="text-white text-decoration-none">About Us</a></li>
-                        <li><a href="{{ route('cart') }}" class="text-white text-decoration-none">Cart</a></li>
+                        <li><a href="{{ route('cart') }}" class="text-white text-decoration-none">My Cart</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 mb-4">
                     <h5 class="mb-3">Contact Us</h5>
                     <p class="mb-2">
                         <i class="fas fa-envelope me-2"></i>
-                        info@tokoonline.com
+                        hello@bunnypops.com
                     </p>
                     <p class="mb-2">
                         <i class="fas fa-phone me-2"></i>
@@ -230,9 +347,9 @@
                     </p>
                 </div>
             </div>
-            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.2);">
             <div class="text-center">
-                <p class="mb-0">&copy; {{ date('Y') }} {{ config('app.name', 'Toko Online') }}. All rights reserved.</p>
+                <p class="mb-0">&copy; {{ date('Y') }} BUNNYPOPS. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -251,7 +368,9 @@
                 title: 'Success!',
                 text: '{{ session('success') }}',
                 timer: 3000,
-                showConfirmButton: false
+                showConfirmButton: false,
+                background: 'var(--misty-rose)',
+                color: 'var(--burgundy)'
             });
         @endif
 
@@ -261,7 +380,9 @@
                 title: 'Error!',
                 text: '{{ session('error') }}',
                 timer: 3000,
-                showConfirmButton: false
+                showConfirmButton: false,
+                background: 'var(--misty-rose)',
+                color: 'var(--burgundy)'
             });
         @endif
 
@@ -270,7 +391,9 @@
                 icon: 'error',
                 title: 'Validation Error!',
                 html: `@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach`,
-                timer: 5000
+                timer: 5000,
+                background: 'var(--misty-rose)',
+                color: 'var(--burgundy)'
             });
         @endif
     </script>
