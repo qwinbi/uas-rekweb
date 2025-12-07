@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+.btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors;
+}
+
+.btn-secondary {
+    @apply bg-purple text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors;
+}
+
+.card-product {
+    @apply bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow;
+}
+
+.form-input {
+    @apply w-full px-4 py-2 rounded-lg border border-purple focus:border-primary focus:ring-2 focus:ring-primary/30 outline-none transition-all;
+}

@@ -27,7 +27,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\"\n}"
+              "raw": "{\n  \"name\": \"QWINBEEEEEE\",\n  \"email\": \"queenbi@email.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/register",
@@ -55,7 +55,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\"\n}"
+                  "raw": "{\n  \"name\": \"QWINBEEEEEEE\",\n  \"email\": \"queenb@email.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/api/v1/register",
@@ -73,7 +73,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Registration successful\",\n    \"user\": {\n        \"id\": 3,\n        \"name\": \"John Doe\",\n        \"email\": \"john@example.com\",\n        \"role\": \"guest\",\n        \"token\": \"d4e5c6b7a8f9e0d1c2b3a4f5e6d7c8b9a0f1e2d3c4b5a6f7e8d9c0b1a2f3e4d5\"\n    }\n}"
+              "body": "{\n    \"status\": \"success\",\n    \"message\": \"Registration successful\",\n    \"user\": {\n        \"id\": 4,\n        \"name\": \"QWINBEEEEE\",\n        \"email\": \"queenbi@email.com\",\n        \"role\": \"guest\",\n        \"token\": \"d4e5c6b7a8f9e0d1c2b3a4f5e6d7c8b9a0f1e2d3c4b5a6f7e8d9c0b1a2f3e4d5\"\n    }\n}"
             }
           ]
         },
