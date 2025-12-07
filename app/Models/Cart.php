@@ -8,4 +8,34 @@ use Illuminate\Database\Eloquent\Model;
 class Cart extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'product_id',
+        'quantity',
+    ];
+
+    protected $appends = ['subtotal'];
+
+    // Relations
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    // Accessors
+    public function getSubtotalAttribute()
+    {
+        return $this->quantity * $this->product->price;
+    }
+
+    public function getFormattedSubtotalAttribute()
+    {
+        return 'Rp ' . number_format($this->subtotal, 0, ',', '.');
+    }
 }

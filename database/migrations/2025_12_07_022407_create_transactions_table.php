@@ -1,3 +1,4 @@
+// database/migrations/2024_01_01_000004_create_transactions_table.php
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -11,11 +12,10 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('invoice_number')->unique();
             $table->decimal('total', 15, 2);
             $table->enum('payment_method', ['virtual_account', 'qris']);
             $table->string('payment_proof')->nullable();
-            $table->enum('status', ['pending', 'waiting_payment', 'processing', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['waiting_approval', 'paid', 'cancelled'])->default('waiting_approval');
             $table->timestamps();
         });
     }
