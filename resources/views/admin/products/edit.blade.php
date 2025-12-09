@@ -1,587 +1,397 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Product - BUNNYPOPS')
+@section('title', 'Edit Product')
 
-@section('admin-content')
-<div class="max-w-4xl mx-auto">
-    <!-- Header -->
-    <div class="mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-[#4D4C7D]">Edit Product</h1>
-                <p class="text-[#8E7AB5]">Update product details</p>
-            </div>
-            <div class="flex gap-3">
-                <a href="{{ route('product.detail', $product->id) }}" 
-                   target="_blank"
-                   class="bg-[#FCEFEA] text-[#4D4C7D] px-6 py-2 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors flex items-center">
-                    <i class="fas fa-eye mr-2"></i>
-                    Preview
-                </a>
+@section('content')
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0" style="color: var(--burgundy);">
+                        <i class="fas fa-edit me-2"></i>Edit Product
+                    </h4>
+                    <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
                 
-                <form action="{{ route('admin.products.destroy', $product->id) }}" 
-                      method="POST" 
-                      onsubmit="return confirm('Are you sure you want to delete this product?')">
+                <form action="#" method="POST" enctype="multipart/form-data">
                     @csrf
-                    @method('DELETE')
-                    <button type="submit" 
-                            class="bg-red-50 text-red-600 px-6 py-2 rounded-lg font-bold hover:bg-red-100 transition-colors flex items-center">
-                        <i class="fas fa-trash mr-2"></i>
-                        Delete
-                    </button>
+                    @method('PUT')
+                    
+                    <!-- Basic Information -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Basic Information</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label required">Product Name</label>
+                                <input type="text" class="form-control" name="name" value="Premium Wireless Headphones" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">SKU</label>
+                                <input type="text" class="form-control" name="sku" value="PROD-1001" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label required">Category</label>
+                                <select class="form-select" name="category_id" required>
+                                    <option value="1" selected>Electronics</option>
+                                    <option value="2">Fashion</option>
+                                    <option value="3">Home & Garden</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Brand</label>
+                                <input type="text" class="form-control" name="brand" value="AudioTech">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Pricing</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label required">Regular Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" class="form-control" name="price" value="599000" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Sale Price</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" class="form-control" name="sale_price" value="499000">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tax Rate (%)</label>
+                                <input type="number" class="form-control" name="tax_rate" value="10" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Inventory -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Inventory</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label required">Stock Quantity</label>
+                                <input type="number" class="form-control" name="stock_quantity" value="50" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Low Stock Threshold</label>
+                                <input type="number" class="form-control" name="low_stock_threshold" value="5">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Stock Status</label>
+                                <select class="form-select" name="stock_status">
+                                    <option value="in_stock" selected>In Stock</option>
+                                    <option value="out_of_stock">Out of Stock</option>
+                                    <option value="backorder">On Backorder</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Images -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Product Images</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Main Image</label>
+                                <div class="border rounded p-3">
+                                    <div class="text-center mb-3">
+                                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                             class="img-fluid rounded" style="max-height: 150px;">
+                                    </div>
+                                    <input type="file" class="form-control" name="main_image" accept="image/*">
+                                    <small class="text-muted">Upload new image to replace current</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Gallery Images</label>
+                                <div class="border rounded p-3">
+                                    <div class="row g-2 mb-3">
+                                        @for($i = 1; $i <= 4; $i++)
+                                        <div class="col-6">
+                                            <div class="position-relative">
+                                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
+                                                     class="img-fluid rounded border" style="height: 80px; object-fit: cover;">
+                                                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0" 
+                                                        style="transform: translate(50%, -50%);">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        @endfor
+                                    </div>
+                                    <input type="file" class="form-control" name="gallery_images[]" multiple accept="image/*">
+                                    <small class="text-muted">Add more images to gallery</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Description</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Short Description</label>
+                            <textarea class="form-control" name="short_description" rows="2">Premium wireless headphones with noise cancellation and 30-hour battery life.</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Full Description</label>
+                            <textarea class="form-control" name="description" rows="6">Experience premium sound quality with our wireless headphones. Features noise cancellation, 30-hour battery life, and comfortable design for extended use. Advanced noise cancellation technology provides crystal-clear audio perfect for music lovers, gamers, and professionals.</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Specifications -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Specifications</h6>
+                        <div id="specsContainer">
+                            @foreach([
+                                ['name' => 'Brand', 'value' => 'AudioTech'],
+                                ['name' => 'Model', 'value' => 'ATH-M50x'],
+                                ['name' => 'Connectivity', 'value' => 'Bluetooth 5.0'],
+                                ['name' => 'Battery Life', 'value' => '30 hours']
+                            ] as $index => $spec)
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="specs[{{ $index }}][name]" 
+                                           value="{{ $spec['name'] }}" placeholder="Specification name">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" name="specs[{{ $index }}][value]" 
+                                           value="{{ $spec['value'] }}" placeholder="Specification value">
+                                </div>
+                                <div class="col-md-1">
+                                    @if($index > 0)
+                                    <button type="button" class="btn btn-danger w-100" onclick="removeSpec(this)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addSpec()">
+                            <i class="fas fa-plus me-2"></i>Add Specification
+                        </button>
+                    </div>
+                    
+                    <!-- Submit -->
+                    <div class="d-flex justify-content-end gap-3">
+                        <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Update Product
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <!-- Form -->
-    <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" id="product-form">
-        @csrf
-        @method('PUT')
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Status Card -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3" style="color: var(--burgundy);">Status & Visibility</h6>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="status" id="status" checked>
+                    <label class="form-check-label" for="status">
+                        Product Active
+                    </label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="featured" id="featured" checked>
+                    <label class="form-check-label" for="featured">
+                        Featured Product
+                    </label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="in_stock" id="inStock" checked>
+                    <label class="form-check-label" for="inStock">
+                        In Stock
+                    </label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="new_arrival" id="newArrival">
+                    <label class="form-check-label" for="newArrival">
+                        Mark as New Arrival
+                    </label>
+                </div>
+            </div>
+        </div>
         
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <!-- Basic Information -->
-            <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                <i class="fas fa-info-circle mr-3 text-[#8E7AB5]"></i>
-                Basic Information
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Product Name -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Product Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" 
-                           name="name" 
-                           value="{{ old('name', $product->name) }}"
-                           required
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="Enter product name">
-                    @error('name')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-                
-                <!-- Price -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Price (Rp) <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8E7AB5]">Rp</span>
-                        <input type="number" 
-                               name="price" 
-                               value="{{ old('price', $product->price) }}"
-                               required
-                               min="0"
-                               step="1000"
-                               class="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                               placeholder="0">
+        <!-- Product Statistics -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3" style="color: var(--burgundy);">Product Statistics</h6>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item border-0 px-0 d-flex justify-content-between">
+                        <span>Views</span>
+                        <span class="fw-semibold">1,248</span>
                     </div>
-                    @error('price')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-                
-                <!-- Stock -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Stock <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number" 
-                           name="stock" 
-                           value="{{ old('stock', $product->stock) }}"
-                           required
-                           min="0"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="Enter stock quantity">
-                    @error('stock')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-                
-                <!-- Category -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Category</label>
-                    <select name="category" 
-                            class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all appearance-none">
-                        <option value="">Select Category</option>
-                        <option value="apparel" {{ old('category') == 'apparel' ? 'selected' : '' }}>Apparel</option>
-                        <option value="home_decor" {{ old('category') == 'home_decor' ? 'selected' : '' }}>Home Decor</option>
-                        <option value="gifts" {{ old('category') == 'gifts' ? 'selected' : '' }}>Gifts</option>
-                        <option value="bunny_items" {{ old('category') == 'bunny_items' ? 'selected' : '' }}>Bunny Items</option>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- Description -->
-            <div class="mb-6">
-                <label class="block text-[#4D4C7D] font-medium mb-2">Description</label>
-                <textarea name="description" 
-                          rows="4"
-                          class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all resize-none"
-                          placeholder="Describe your product...">{{ old('description', $product->description) }}</textarea>
-                <div class="text-right text-sm text-[#8E7AB5] mt-1">
-                    <span id="char-count">{{ strlen(old('description', $product->description)) }}</span>/1000 characters
-                </div>
-                @error('description')
-                    <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                @enderror
-            </div>
-        </div>
-
-        <!-- Product Image -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                <i class="fas fa-image mr-3 text-[#8E7AB5]"></i>
-                Product Image
-            </h2>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Current Image & Upload -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Current Image
-                    </label>
-                    
-                    <div class="mb-6">
-                        @if($product->photo)
-                            <div class="w-48 h-48 mx-auto bg-gradient-to-br from-[#F9DCC4] to-[#8E7AB5] rounded-lg overflow-hidden">
-                                <img src="{{ asset('storage/products/' . $product->photo) }}" 
-                                     alt="{{ $product->name }}" 
-                                     class="w-full h-full object-cover">
-                            </div>
-                            <div class="text-center mt-2 text-sm text-[#8E7AB5]">
-                                Current image: {{ $product->photo }}
-                            </div>
-                        @else
-                            <div class="w-48 h-48 mx-auto bg-gradient-to-br from-[#F9DCC4] to-[#8E7AB5] rounded-lg flex items-center justify-center">
-                                <i class="fas fa-box text-white text-3xl"></i>
-                            </div>
-                            <div class="text-center mt-2 text-sm text-[#8E7AB5]">
-                                No image uploaded
-                            </div>
-                        @endif
+                    <div class="list-group-item border-0 px-0 d-flex justify-content-between">
+                        <span>Sales</span>
+                        <span class="fw-semibold">156</span>
                     </div>
-                    
-                    <label class="block text-[#4D4C7D] font-medium mb-2">
-                        Update Image
-                    </label>
-                    <div class="border-2 border-dashed border-[#F9DCC4] rounded-xl p-6 text-center hover:border-[#8E7AB5] transition-colors cursor-pointer"
-                         onclick="document.getElementById('photo').click()">
-                        <input type="file" 
-                               id="photo" 
-                               name="photo" 
-                               accept="image/*"
-                               class="hidden"
-                               onchange="previewImage(this)">
-                        
-                        <div id="image-preview" class="hidden mb-4">
-                            <img id="preview-image" class="max-w-full max-h-64 mx-auto rounded-lg">
-                            <button type="button" 
-                                    onclick="removeImage()"
-                                    class="mt-2 text-[#FF6F61] hover:text-red-700">
-                                <i class="fas fa-trash mr-1"></i> Remove new image
-                            </button>
-                        </div>
-                        
-                        <div id="upload-prompt">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-[#8E7AB5] mb-3"></i>
-                            <p class="text-[#4D4C7D] mb-2">Click to upload new image</p>
-                            <p class="text-sm text-[#8E7AB5] mb-4">Leave empty to keep current image</p>
-                            <div class="inline-block bg-[#FCEFEA] text-[#4D4C7D] px-6 py-2 rounded-lg font-bold">
-                                <i class="fas fa-image mr-2"></i> Choose File
-                            </div>
-                        </div>
+                    <div class="list-group-item border-0 px-0 d-flex justify-content-between">
+                        <span>Revenue</span>
+                        <span class="fw-semibold">Rp 77,844,000</span>
                     </div>
-                    @error('photo')
-                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
-                    @enderror
-                </div>
-                
-                <!-- Image Guidelines -->
-                <div>
-                    <h3 class="font-bold text-[#4D4C7D] mb-4">Image Guidelines</h3>
-                    <ul class="space-y-3 text-sm text-[#4D4C7D]">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Use high-quality images with good lighting</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Recommended size: 800x800 pixels or square ratio</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Show the product from multiple angles if possible</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Use white or neutral background for best results</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2 mt-1"></i>
-                            <span>Maximum file size: 2MB</span>
-                        </li>
-                    </ul>
-                    
-                    <!-- Preview Card -->
-                    <div class="mt-6 p-4 bg-[#FCEFEA] rounded-lg">
-                        <h4 class="font-bold text-[#4D4C7D] mb-2">Preview</h4>
-                        <p class="text-sm text-[#8E7AB5]">
-                            Your product will appear like this in the shop
-                        </p>
-                        <div id="preview-card" class="mt-4 bg-white rounded-lg shadow-sm p-4">
-                            <div class="w-full h-40 bg-gradient-to-br from-[#F9DCC4] to-[#8E7AB5] rounded-lg flex items-center justify-center mb-3 overflow-hidden">
-                                @if($product->photo)
-                                    <img src="{{ asset('storage/products/' . $product->photo) }}" 
-                                         alt="{{ $product->name }}" 
-                                         class="w-full h-full object-cover">
-                                @else
-                                    <i class="fas fa-box text-white text-3xl"></i>
-                                @endif
-                            </div>
-                            <div class="font-bold text-[#4D4C7D] text-sm mb-1">{{ $product->name }}</div>
-                            <div class="text-[#FF6F61] font-bold">
-                                Rp {{ number_format($product->price, 0, ',', '.') }}
-                            </div>
-                        </div>
+                    <div class="list-group-item border-0 px-0 d-flex justify-content-between">
+                        <span>Rating</span>
+                        <span class="fw-semibold">4.5/5.0</span>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Additional Information -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                <i class="fas fa-cog mr-3 text-[#8E7AB5]"></i>
-                Additional Information
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Weight -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Weight (kg)</label>
-                    <input type="number" 
-                           name="weight" 
-                           value="{{ old('weight') }}"
-                           step="0.1"
-                           min="0"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="0.5">
-                </div>
-                
-                <!-- Dimensions -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Dimensions (cm)</label>
-                    <div class="flex gap-2">
-                        <input type="text" 
-                               name="dimensions_length" 
-                               value="{{ old('dimensions_length') }}"
-                               placeholder="Length"
-                               class="flex-1 px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all">
-                        <input type="text" 
-                               name="dimensions_width" 
-                               value="{{ old('dimensions_width') }}"
-                               placeholder="Width"
-                               class="flex-1 px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all">
-                        <input type="text" 
-                               name="dimensions_height" 
-                               value="{{ old('dimensions_height') }}"
-                               placeholder="Height"
-                               class="flex-1 px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all">
-                    </div>
-                </div>
-                
-                <!-- Material -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Material</label>
-                    <input type="text" 
-                           name="material"
-                           value="{{ old('material') }}"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="e.g., Cotton, Polyester, etc.">
-                </div>
-                
-                <!-- Color -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Color</label>
-                    <input type="text" 
-                           name="color"
-                           value="{{ old('color') }}"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="e.g., Red, Blue, Pink, etc.">
-                </div>
-            </div>
-            
-            <!-- Features -->
-            <div class="mt-6">
-                <label class="block text-[#4D4C7D] font-medium mb-2">Features (Optional)</label>
-                <div id="features-container">
-                    <!-- Features will be added here -->
-                </div>
-                <button type="button" 
-                        onclick="addFeatureField()"
-                        class="mt-2 text-[#8E7AB5] hover:text-[#FF6F61] flex items-center">
-                    <i class="fas fa-plus mr-2"></i>
-                    Add Feature
-                </button>
-            </div>
-        </div>
-
+        
         <!-- SEO Settings -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-            <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                <i class="fas fa-search mr-3 text-[#8E7AB5]"></i>
-                SEO Settings
-            </h2>
-            
-            <div class="space-y-6">
-                <!-- Meta Title -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Meta Title</label>
-                    <input type="text" 
-                           name="meta_title"
-                           value="{{ old('meta_title') }}"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="Optimized title for search engines">
-                    <div class="text-sm text-[#8E7AB5] mt-1">
-                        Recommended: 50-60 characters
-                    </div>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3" style="color: var(--burgundy);">SEO Settings</h6>
+                <div class="mb-3">
+                    <label class="form-label">SEO Title</label>
+                    <input type="text" class="form-control" name="seo_title" 
+                           value="Premium Wireless Headphones | BUNNYPOPS">
                 </div>
-                
-                <!-- Meta Description -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Meta Description</label>
-                    <textarea name="meta_description" 
-                              rows="3"
-                              class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all resize-none"
-                              placeholder="Brief description for search engine results">{{ old('meta_description') }}</textarea>
-                    <div class="text-sm text-[#8E7AB5] mt-1">
-                        Recommended: 150-160 characters
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Slug</label>
+                    <input type="text" class="form-control" name="slug" 
+                           value="premium-wireless-headphones">
                 </div>
-                
-                <!-- Keywords -->
-                <div>
-                    <label class="block text-[#4D4C7D] font-medium mb-2">Keywords</label>
-                    <input type="text" 
-                           name="keywords"
-                           value="{{ old('keywords') }}"
-                           class="w-full px-4 py-3 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                           placeholder="cute, bunny, plush, gift, etc.">
-                    <div class="text-sm text-[#8E7AB5] mt-1">
-                        Separate keywords with commas
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Meta Description</label>
+                    <textarea class="form-control" name="meta_description" rows="3">Premium wireless headphones with noise cancellation. 30-hour battery life. Free shipping available.</textarea>
                 </div>
             </div>
         </div>
-
-        <!-- Form Actions -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <div class="flex flex-col md:flex-row gap-4">
-                <button type="submit" 
-                        class="flex-1 bg-gradient-to-r from-[#FF6F61] to-[#8E7AB5] text-white py-4 rounded-lg font-bold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center justify-center">
-                    <i class="fas fa-save mr-2"></i>
-                    Update Product
-                </button>
-                
-                <button type="button" 
-                        onclick="saveAsDraft()"
-                        class="flex-1 bg-[#FCEFEA] text-[#4D4C7D] py-4 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors shadow-lg hover:shadow-xl flex items-center justify-center">
-                    <i class="fas fa-file-alt mr-2"></i>
-                    Save as Draft
-                </button>
-                
-                <a href="{{ route('admin.products.index') }}" 
-                   class="flex-1 bg-white border-2 border-[#F9DCC4] text-[#4D4C7D] py-4 rounded-lg font-bold hover:bg-[#FCEFEA] transition-colors shadow-lg hover:shadow-xl flex items-center justify-center">
-                    <i class="fas fa-times mr-2"></i>
-                    Cancel
-                </a>
-            </div>
-            
-            <!-- Save Options -->
-            <div class="mt-6 pt-6 border-t border-[#F9DCC4]">
-                <label class="flex items-center">
-                    <input type="checkbox" 
-                           name="publish" 
-                           checked
-                           class="w-4 h-4 text-[#FF6F61] border-[#F9DCC4] rounded focus:ring-[#FF6F61]">
-                    <span class="ml-2 text-[#4D4C7D]">Publish immediately</span>
-                </label>
-                
-                <label class="flex items-center mt-3">
-                    <input type="checkbox" 
-                           name="featured"
-                           {{ $product->featured ? 'checked' : '' }}
-                           class="w-4 h-4 text-[#FF6F61] border-[#F9DCC4] rounded focus:ring-[#FF6F61]">
-                    <span class="ml-2 text-[#4D4C7D]">Mark as featured product</span>
-                </label>
-            </div>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
-    // Character counter for description
-    const descriptionTextarea = document.querySelector('textarea[name="description"]');
-    const charCount = document.getElementById('char-count');
+    let specCount = 4;
     
-    if (descriptionTextarea && charCount) {
-        descriptionTextarea.addEventListener('input', function() {
-            charCount.textContent = this.value.length;
-            
-            // Update preview card
-            const previewName = document.querySelector('#preview-card .font-bold');
-            if (previewName) {
-                previewName.textContent = this.value.substring(0, 50) + (this.value.length > 50 ? '...' : '');
-            }
-        });
-    }
-    
-    // Update preview card with form data
-    document.querySelectorAll('input[name="name"], input[name="price"]').forEach(input => {
-        input.addEventListener('input', updatePreviewCard);
-    });
-    
-    function updatePreviewCard() {
-        const nameInput = document.querySelector('input[name="name"]');
-        const priceInput = document.querySelector('input[name="price"]');
-        const previewCard = document.getElementById('preview-card');
-        
-        if (previewCard && nameInput && priceInput) {
-            const nameElement = previewCard.querySelector('.font-bold.text-sm');
-            const priceElement = previewCard.querySelector('.text-\[#FF6F61\]');
-            
-            if (nameElement && nameInput.value) {
-                nameElement.textContent = nameInput.value.substring(0, 50) + (nameInput.value.length > 50 ? '...' : '');
-            }
-            
-            if (priceElement && priceInput.value) {
-                const formattedPrice = new Intl.NumberFormat('id-ID').format(priceInput.value);
-                priceElement.textContent = 'Rp ' + formattedPrice;
-            }
-        }
-    }
-    
-    // Image preview
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            const maxSize = 2 * 1024 * 1024; // 2MB
-            
-            if (input.files[0].size > maxSize) {
-                alert('File size must be less than 2MB');
-                input.value = '';
-                return;
-            }
-            
-            reader.onload = function(e) {
-                document.getElementById('preview-image').src = e.target.result;
-                document.getElementById('image-preview').style.display = 'block';
-                document.getElementById('upload-prompt').style.display = 'none';
-                
-                // Update preview card image
-                const previewCardImage = document.querySelector('#preview-card div:first-child');
-                if (previewCardImage) {
-                    previewCardImage.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-lg">`;
-                }
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
-    function removeImage() {
-        document.getElementById('photo').value = '';
-        document.getElementById('image-preview').style.display = 'none';
-        document.getElementById('upload-prompt').style.display = 'block';
-        
-        // Reset preview card image to current
-        const previewCardImage = document.querySelector('#preview-card div:first-child');
-        if (previewCardImage) {
-            @if($product->photo)
-                previewCardImage.innerHTML = `<img src="{{ asset('storage/products/' . $product->photo) }}" class="w-full h-full object-cover rounded-lg">`;
-            @else
-                previewCardImage.innerHTML = '<i class="fas fa-box text-white text-3xl"></i>';
-            @endif
-        }
-    }
-    
-    // Features management
-    let featureCount = 0;
-    
-    function addFeatureField(value = '') {
-        featureCount++;
-        const container = document.getElementById('features-container');
-        
-        const featureDiv = document.createElement('div');
-        featureDiv.className = 'flex gap-2 mb-2';
-        featureDiv.innerHTML = `
-            <input type="text" 
-                   name="features[]" 
-                   value="${value}"
-                   class="flex-grow px-4 py-2 rounded-lg border-2 border-[#F9DCC4] focus:border-[#FF6F61] focus:ring-2 focus:ring-[#FF6F61]/30 outline-none transition-all"
-                   placeholder="Enter feature (e.g., Machine washable, Non-toxic)">
-            <button type="button" 
-                    onclick="this.parentElement.remove()"
-                    class="w-10 h-10 bg-red-50 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-100 transition-colors">
-                <i class="fas fa-times"></i>
-            </button>
+    function addSpec() {
+        const container = document.getElementById('specsContainer');
+        const div = document.createElement('div');
+        div.className = 'row g-2 mb-2';
+        div.innerHTML = `
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="specs[${specCount}][name]" 
+                       placeholder="Specification name">
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="specs[${specCount}][value]" 
+                       placeholder="Specification value">
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger w-100" onclick="removeSpec(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
         `;
-        
-        container.appendChild(featureDiv);
+        container.appendChild(div);
+        specCount++;
     }
     
-    // Load existing features if any
-    document.addEventListener('DOMContentLoaded', function() {
-        // You can load existing features from database here
-        // For now, we'll add one empty field
-        addFeatureField();
+    function removeSpec(button) {
+        button.closest('.row').remove();
+    }
+    
+    // Remove gallery image
+    document.querySelectorAll('.btn-danger.position-absolute').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const imageContainer = this.closest('.position-relative');
+            
+            Swal.fire({
+                title: 'Remove Image?',
+                text: "Are you sure you want to remove this image from gallery?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: 'var(--burgundy)',
+                cancelButtonColor: 'var(--silver-lake)',
+                confirmButtonText: 'Yes, remove it!',
+                background: 'var(--light-pink)',
+                color: 'var(--burgundy)'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    imageContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        imageContainer.remove();
+                        Swal.fire(
+                            'Removed!',
+                            'Image has been removed from gallery.',
+                            'success'
+                        );
+                    }, 300);
+                }
+            });
+        });
     });
     
     // Form validation
-    document.getElementById('product-form').addEventListener('submit', function(e) {
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
-        // Validate required fields
+    document.querySelector('form').addEventListener('submit', function(e) {
         const requiredFields = this.querySelectorAll('[required]');
-        let isValid = true;
+        let valid = true;
         
         requiredFields.forEach(field => {
             if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('border-red-500');
-                field.classList.remove('border-[#F9DCC4]');
+                valid = false;
+                field.classList.add('is-invalid');
             } else {
-                field.classList.remove('border-red-500');
-                field.classList.add('border-[#F9DCC4]');
+                field.classList.remove('is-invalid');
             }
         });
         
-        if (!isValid) {
+        if (!valid) {
             e.preventDefault();
-            alert('Please fill in all required fields');
-            return;
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please fill in all required fields.',
+                background: 'var(--light-pink)',
+                color: 'var(--burgundy)'
+            });
         }
-        
-        // Validate image if new one is uploaded
-        const imageInput = document.getElementById('photo');
-        if (imageInput && imageInput.files.length > 0) {
-            const file = imageInput.files[0];
-            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-            const maxSize = 2 * 1024 * 1024; // 2MB
-            
-            if (!validTypes.includes(file.type)) {
-                e.preventDefault();
-                alert('Only JPG, PNG, and WebP images are allowed');
-                return;
-            }
-            
-            if (file.size > maxSize) {
-                e.preventDefault();
-                alert('Image size must be less than 2MB');
-                return;
-            }
-        }
+    });
+</script>
+
+<style>
+    .form-label.required::after {
+        content: ' *';
+        color: var(--burgundy);
+    }
+    
+    .form-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+    }
+    
+    .form-switch .form-check-input:checked {
+        background-color: var(--burgundy);
+        border-color: var(--burgundy);
+    }
+    
+    .position-relative .btn-danger {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+    
+    .list-group-item {
+        color: var(--lapis-lazuli);
+    }
+</style>
+@endsection

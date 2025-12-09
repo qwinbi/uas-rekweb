@@ -17,7 +17,7 @@ class CheckoutController extends Controller
         $cartItems = Auth::user()->carts()->with('product')->get();
         
         if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty');
+            return redirect()->route('cart')->with('error', 'Your cart is empty');
         }
 
         $total = $cartItems->sum(function ($item) {

@@ -1,555 +1,552 @@
 @extends('layouts.app')
 
-@section('title', 'Order Details - BUNNYPOPS')
+@section('title', 'Order Details')
 
 @section('content')
-<div class="py-8">
-    <!-- Breadcrumb -->
-    <div class="mb-6">
-        <nav class="flex" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="{{ route('home') }}" class="inline-flex items-center text-sm text-[#8E7AB5] hover:text-[#FF6F61]">
-                        <i class="fas fa-home mr-2"></i>
-                        Home
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center">
-                        <i class="fas fa-chevron-right text-[#8E7AB5] mx-2"></i>
-                        <a href="{{ route('transactions.index') }}" class="text-sm text-[#8E7AB5] hover:text-[#FF6F61]">
-                            Orders
-                        </a>
-                    </div>
-                </li>
-                <li aria-current="page">
-                    <div class="flex items-center">
-                        <i class="fas fa-chevron-right text-[#8E7AB5] mx-2"></i>
-                        <span class="text-sm font-medium text-[#4D4C7D]">
-                            Order {{ $transaction->invoice_number }}
-                        </span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
-    </div>
-
-    <!-- Order Header -->
-    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-[#4D4C7D] mb-2">
-                    Order {{ $transaction->invoice_number }}
-                </h1>
-                <p class="text-[#8E7AB5]">
-                    Placed on {{ $transaction->created_at->format('F d, Y \a\t h:i A') }}
-                </p>
-            </div>
-            
-            <!-- Order Status -->
-            <div class="flex items-center gap-4">
-                @if($transaction->status == 'completed')
-                <span class="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 font-bold">
-                    <i class="fas fa-check-circle mr-2"></i> Completed
-                </span>
-                @elseif($transaction->status == 'processing')
-                <span class="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 font-bold">
-                    <i class="fas fa-sync-alt mr-2"></i> Processing
-                </span>
-                @elseif($transaction->status == 'waiting_payment')
-                <span class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-100 text-yellow-800 font-bold">
-                    <i class="fas fa-clock mr-2"></i> Waiting Payment
-                </span>
-                @else
-                <span class="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 text-gray-800 font-bold">
-                    <i class="fas fa-hourglass-half mr-2"></i> Pending
-                </span>
-                @endif
-                
-                <div class="text-right">
-                    <div class="text-2xl font-bold text-[#FF6F61]">
-                        Rp {{ number_format($transaction->total, 0, ',', '.') }}
-                    </div>
-                    <div class="text-sm text-[#8E7AB5]">Total Amount</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Order Details -->
-        <div class="lg:col-span-2 space-y-8">
-            <!-- Order Items -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                    <i class="fas fa-box-open mr-3 text-[#8E7AB5]"></i>
-                    Order Items
-                </h2>
-                
-                <div class="space-y-6">
-                    @foreach($transaction->items as $item)
-                    <div class="flex flex-col sm:flex-row gap-4 p-4 border border-[#F9DCC4] rounded-xl">
-                        <!-- Product Image -->
-                        <div class="sm:w-20 h-20 flex-shrink-0">
-                            @if($item->product->photo)
-                                <img src="{{ asset('storage/products/' . $item->product->photo) }}" 
-                                     alt="{{ $item->product->name }}" 
-                                     class="w-full h-full object-cover rounded-lg">
-                            @else
-                                <div class="w-full h-full bg-gradient-to-br from-[#F9DCC4] to-[#8E7AB5] rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-box text-white text-xl opacity-50"></i>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <!-- Product Info -->
-                        <div class="flex-grow">
-                            <div class="flex justify-between">
-                                <div>
-                                    <h3 class="font-bold text-[#4D4C7D] mb-1">{{ $item->product->name }}</h3>
-                                    <p class="text-sm text-[#8E7AB5]">Quantity: {{ $item->quantity }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-lg font-bold text-[#4D4C7D]">
-                                        Rp {{ number_format($item->price, 0, ',', '.') }}
-                                    </div>
-                                    <div class="text-sm text-[#8E7AB5]">each</div>
-                                </div>
-                            </div>
-                            
-                            <!-- Subtotal -->
-                            <div class="mt-3 pt-3 border-t border-[#F9DCC4] flex justify-between items-center">
-                                <span class="text-[#4D4C7D]">Subtotal:</span>
-                                <span class="text-lg font-bold text-[#4D4C7D]">
-                                    Rp {{ number_format($item->subtotal, 0, ',', '.') }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Order Timeline -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                    <i class="fas fa-history mr-3 text-[#8E7AB5]"></i>
-                    Order Timeline
-                </h2>
-                
-                <div class="space-y-6">
-                    <!-- Timeline Step 1 -->
-                    <div class="flex items-start">
-                        <div class="w-10 h-10 bg-[#FF6F61] rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="font-bold text-[#4D4C7D]">Order Placed</h3>
-                            <p class="text-[#8E7AB5] text-sm">{{ $transaction->created_at->format('F d, Y \a\t h:i A') }}</p>
-                            <p class="text-[#4D4C7D] mt-1">Your order has been received</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Timeline Step 2 -->
-                    <div class="flex items-start">
-                        <div class="w-10 h-10 {{ $transaction->status != 'pending' ? 'bg-[#FF6F61]' : 'bg-[#FCEFEA]' }} rounded-full flex items-center justify-center {{ $transaction->status != 'pending' ? 'text-white' : 'text-[#8E7AB5]' }} font-bold flex-shrink-0">
-                            @if($transaction->status != 'pending')
-                                <i class="fas fa-check"></i>
-                            @else
-                                <i class="fas fa-clock"></i>
-                            @endif
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="font-bold text-[#4D4C7D]">Payment {{ $transaction->status != 'pending' ? 'Confirmed' : 'Pending' }}</h3>
-                            @if($transaction->payment_proof)
-                                <p class="text-[#8E7AB5] text-sm">Payment proof uploaded</p>
-                            @else
-                                <p class="text-[#8E7AB5] text-sm">Awaiting payment confirmation</p>
-                            @endif
-                            <p class="text-[#4D4C7D] mt-1">
-                                @if($transaction->payment_method == 'qris')
-                                    QRIS Payment Method
-                                @else
-                                    Virtual Account Payment Method
-                                @endif
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Timeline Step 3 -->
-                    <div class="flex items-start">
-                        <div class="w-10 h-10 {{ $transaction->status == 'processing' || $transaction->status == 'completed' ? 'bg-[#FF6F61]' : 'bg-[#FCEFEA]' }} rounded-full flex items-center justify-center {{ $transaction->status == 'processing' || $transaction->status == 'completed' ? 'text-white' : 'text-[#8E7AB5]' }} font-bold flex-shrink-0">
-                            @if($transaction->status == 'processing' || $transaction->status == 'completed')
-                                <i class="fas fa-check"></i>
-                            @else
-                                <i class="fas fa-box"></i>
-                            @endif
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="font-bold text-[#4D4C7D]">Processing</h3>
-                            @if($transaction->status == 'processing' || $transaction->status == 'completed')
-                                <p class="text-[#8E7AB5] text-sm">Order is being prepared</p>
-                            @else
-                                <p class="text-[#8E7AB5] text-sm">Will start after payment confirmation</p>
-                            @endif
-                            <p class="text-[#4D4C7D] mt-1">Items are being prepared for shipment</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Timeline Step 4 -->
-                    <div class="flex items-start">
-                        <div class="w-10 h-10 {{ $transaction->status == 'completed' ? 'bg-[#FF6F61]' : 'bg-[#FCEFEA]' }} rounded-full flex items-center justify-center {{ $transaction->status == 'completed' ? 'text-white' : 'text-[#8E7AB5]' }} font-bold flex-shrink-0">
-                            @if($transaction->status == 'completed')
-                                <i class="fas fa-check"></i>
-                            @else
-                                <i class="fas fa-shipping-fast"></i>
-                            @endif
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="font-bold text-[#4D4C7D]">Shipped</h3>
-                            @if($transaction->status == 'completed')
-                                <p class="text-[#8E7AB5] text-sm">Order has been delivered</p>
-                            @else
-                                <p class="text-[#8E7AB5] text-sm">Not yet shipped</p>
-                            @endif
-                            <p class="text-[#4D4C7D] mt-1">Estimated delivery: 2-3 business days</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+<div class="row">
+    <div class="col-lg-8">
         <!-- Order Summary -->
-        <div class="space-y-8">
-            <!-- Order Info -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                    <i class="fas fa-info-circle mr-3 text-[#8E7AB5]"></i>
-                    Order Information
-                </h2>
-                
-                <div class="space-y-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <div class="text-sm text-[#8E7AB5] mb-1">Order ID</div>
-                        <div class="font-bold text-[#4D4C7D]">{{ $transaction->invoice_number }}</div>
+                        <h3 class="fw-bold mb-1" style="color: var(--burgundy);">
+                            Order #ORD1001
+                        </h3>
+                        <small class="text-muted">Placed on {{ now()->format('d F Y, H:i') }}</small>
                     </div>
-                    
                     <div>
-                        <div class="text-sm text-[#8E7AB5] mb-1">Payment Method</div>
-                        <div class="font-bold text-[#4D4C7D]">
-                            @if($transaction->payment_method == 'qris')
-                                QRIS Payment
-                            @else
-                                Virtual Account
-                            @endif
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <div class="text-sm text-[#8E7AB5] mb-1">Payment Status</div>
-                        <div class="font-bold text-[#4D4C7D]">
-                            @if($transaction->payment_proof)
-                                <span class="text-green-600">Proof Uploaded</span>
-                            @else
-                                <span class="text-yellow-600">Awaiting Proof</span>
-                            @endif
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <div class="text-sm text-[#8E7AB5] mb-1">Order Date</div>
-                        <div class="font-bold text-[#4D4C7D]">{{ $transaction->created_at->format('F d, Y') }}</div>
+                        <span class="badge bg-success">Delivered</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Price Breakdown -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                    <i class="fas fa-receipt mr-3 text-[#8E7AB5]"></i>
-                    Price Breakdown
-                </h2>
                 
-                <div class="space-y-3">
-                    <div class="flex justify-between">
-                        <span class="text-[#4D4C7D]">Subtotal</span>
-                        <span class="text-[#4D4C7D] font-medium">
-                            Rp {{ number_format($transaction->total, 0, ',', '.') }}
-                        </span>
-                    </div>
-                    
-                    <div class="flex justify-between">
-                        <span class="text-[#4D4C7D]">Shipping</span>
-                        <span class="text-[#4D4C7D] font-medium">
-                            Rp {{ number_format(10000, 0, ',', '.') }}
-                        </span>
-                    </div>
-                    
-                    <div class="flex justify-between">
-                        <span class="text-[#4D4C7D]">Tax (10%)</span>
-                        <span class="text-[#4D4C7D] font-medium">
-                            Rp {{ number_format($transaction->total * 0.1, 0, ',', '.') }}
-                        </span>
-                    </div>
-                    
-                    <div class="border-t border-[#F9DCC4] pt-3">
-                        <div class="flex justify-between">
-                            <span class="text-lg font-bold text-[#4D4C7D]">Total</span>
-                            <span class="text-2xl font-bold text-[#FF6F61]">
-                                Rp {{ number_format($transaction->total + 10000 + ($transaction->total * 0.1), 0, ',', '.') }}
-                            </span>
+                <!-- Order Status Timeline -->
+                <div class="mb-4">
+                    <div class="status-timeline">
+                        <div class="row text-center">
+                            @foreach([
+                                ['icon' => 'fas fa-shopping-cart', 'title' => 'Order Placed', 'date' => now()->subDays(5)->format('d M'), 'active' => true],
+                                ['icon' => 'fas fa-money-bill-wave', 'title' => 'Payment Confirmed', 'date' => now()->subDays(5)->format('d M'), 'active' => true],
+                                ['icon' => 'fas fa-cog', 'title' => 'Processing', 'date' => now()->subDays(4)->format('d M'), 'active' => true],
+                                ['icon' => 'fas fa-truck', 'title' => 'Shipped', 'date' => now()->subDays(3)->format('d M'), 'active' => true],
+                                ['icon' => 'fas fa-check-circle', 'title' => 'Delivered', 'date' => now()->subDays(1)->format('d M'), 'active' => true]
+                            ] as $status)
+                            <div class="col">
+                                <div class="status-step {{ $status['active'] ? 'active' : '' }}">
+                                    <div class="status-icon">
+                                        <i class="{{ $status['icon'] }} fa-2x"></i>
+                                    </div>
+                                    <div class="status-info mt-2">
+                                        <small class="d-block fw-semibold">{{ $status['title'] }}</small>
+                                        <small class="text-muted">{{ $status['date'] }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                    <i class="fas fa-cog mr-3 text-[#8E7AB5]"></i>
-                    Actions
-                </h2>
                 
-                <div class="space-y-3">
-                    @if(($transaction->status == 'pending' || $transaction->status == 'waiting_payment') && !$transaction->payment_proof)
-                    <button onclick="showUploadModal({{ $transaction->id }})"
-                            class="w-full bg-[#8E7AB5] text-white py-3 rounded-lg font-bold hover:bg-[#4D4C7D] transition-colors flex items-center justify-center">
-                        <i class="fas fa-upload mr-2"></i>
-                        Upload Payment Proof
-                    </button>
-                    @endif
+                <!-- Order Items -->
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Order Items</h5>
                     
-                    <a href="#" 
-                       class="w-full bg-[#FCEFEA] text-[#4D4C7D] py-3 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors flex items-center justify-center">
-                        <i class="fas fa-print mr-2"></i>
-                        Print Invoice
-                    </a>
-                    
-                    <a href="#" 
-                       class="w-full bg-[#FCEFEA] text-[#4D4C7D] py-3 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors flex items-center justify-center">
-                        <i class="fas fa-question-circle mr-2"></i>
-                        Get Help
-                    </a>
-                    
-                    <a href="{{ route('transactions.index') }}" 
-                       class="w-full bg-[#FCEFEA] text-[#4D4C7D] py-3 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors flex items-center justify-center">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        Back to Orders
-                    </a>
+                    <div class="order-items">
+                        @for($i = 1; $i <= 3; $i++)
+                        <div class="order-item border-bottom pb-3 mb-3">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" 
+                                         class="img-fluid rounded" style="border: 2px solid var(--cherry-blossom);">
+                                </div>
+                                <div class="col-md-5">
+                                    <h6 class="fw-bold mb-1" style="color: var(--lapis-lazuli);">Product Name {{ $i }}</h6>
+                                    <small class="text-muted">SKU: PROD-{{ 1000 + $i }}</small>
+                                    <div class="text-warning small mt-1">
+                                        @for($j = 1; $j <= 5; $j++)
+                                        <i class="fas fa-star"></i>
+                                        @endfor
+                                    </div>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <span class="fw-bold">Qty: {{ $i }}</span>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <div class="fw-bold" style="color: var(--burgundy);">
+                                        Rp {{ number_format(rand(50000, 200000) * $i, 0, ',', '.') }}
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary mt-2">
+                                        <i class="fas fa-redo me-1"></i>Buy Again
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        @endfor
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Payment Proof Preview -->
-            @if($transaction->payment_proof)
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h2 class="text-xl font-bold text-[#4D4C7D] mb-6 flex items-center">
-                    <i class="fas fa-image mr-3 text-[#8E7AB5]"></i>
-                    Payment Proof
-                </h2>
                 
-                <div class="text-center">
-                    <img src="{{ asset('storage/payments/' . $transaction->payment_proof) }}" 
-                         alt="Payment Proof" 
-                         class="max-w-full h-48 object-contain mx-auto rounded-lg shadow-sm">
-                    <p class="text-sm text-[#8E7AB5] mt-3">Uploaded on {{ $transaction->updated_at->format('F d, Y') }}</p>
-                </div>
-            </div>
-            @endif
-        </div>
-    </div>
-</div>
-
-<!-- Upload Payment Proof Modal (same as in index.blade.php) -->
-<div id="upload-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/50"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div class="p-6 border-b border-[#F9DCC4]">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold text-[#4D4C7D]">Upload Payment Proof</h3>
-                    <button onclick="closeUploadModal()" class="text-[#8E7AB5] hover:text-[#FF6F61] text-xl">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-6">
-                <form id="upload-form" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" id="transaction-id" name="transaction_id" value="{{ $transaction->id }}">
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <h5 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Order Summary</h5>
                     
-                    <div class="mb-6">
-                        <p class="text-[#4D4C7D] mb-4">Please upload proof of payment for your order.</p>
-                        
-                        <div class="border-2 border-dashed border-[#F9DCC4] rounded-xl p-6 text-center hover:border-[#8E7AB5] transition-colors">
-                            <input type="file" 
-                                   id="payment_proof_modal" 
-                                   name="payment_proof"
-                                   accept="image/*"
-                                   class="hidden"
-                                   onchange="previewModalImage(this)">
-                            <div id="image-preview-modal" class="hidden mb-4">
-                                <img id="preview-image-modal" class="max-w-full max-h-48 mx-auto rounded-lg">
-                                <button type="button" 
-                                        onclick="removeModalImage()"
-                                        class="mt-2 text-[#FF6F61] hover:text-red-700">
-                                    <i class="fas fa-trash mr-1"></i> Remove image
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 mb-3">
+                                <h6 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Payment Information</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Method</small>
+                                        <strong>QRIS</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Status</small>
+                                        <span class="badge bg-success">Paid</span>
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        <small class="text-muted d-block">Transaction ID</small>
+                                        <strong>TX{{ rand(100000, 999999) }}</strong>
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        <small class="text-muted d-block">Paid Date</small>
+                                        <strong>{{ now()->format('d/m/Y H:i') }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3">
+                                <h6 class="fw-bold mb-3" style="color: var(--lapis-lazuli);">Shipping Information</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Method</small>
+                                        <strong>Standard Shipping</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Tracking</small>
+                                        <strong>TRK{{ rand(100000000, 999999999) }}</strong>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <small class="text-muted d-block">Address</small>
+                                        <strong>Jl. Sudirman No. 123, Jakarta Pusat</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Price Breakdown -->
+                    <div class="border rounded p-3 mt-3">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal (3 items)</span>
+                                    <span class="fw-semibold">Rp 457,000</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Shipping</span>
+                                    <span class="fw-semibold text-success">FREE</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tax</span>
+                                    <span class="fw-semibold">Rp 22,850</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Discount</span>
+                                    <span class="fw-semibold text-danger">-Rp 50,000</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold h5" style="color: var(--burgundy);">Total</span>
+                                    <span class="fw-bold h5" style="color: var(--burgundy);">Rp 429,850</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-print me-2"></i>Print Invoice
                                 </button>
                             </div>
-                            <div id="upload-prompt-modal">
-                                <i class="fas fa-cloud-upload-alt text-4xl text-[#8E7AB5] mb-3"></i>
-                                <p class="text-[#4D4C7D] mb-2">Click to upload payment proof</p>
-                                <p class="text-sm text-[#8E7AB5] mb-4">Supported: JPG, PNG (Max: 2MB)</p>
-                                <label for="payment_proof_modal" 
-                                       class="inline-block bg-[#FCEFEA] text-[#4D4C7D] px-6 py-2 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors cursor-pointer">
-                                    <i class="fas fa-image mr-2"></i> Choose File
-                                </label>
-                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Need Help? -->
+        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, var(--light-pink), #fff);">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="fw-bold mb-2" style="color: var(--burgundy);">Need help with your order?</h5>
+                        <p class="mb-0" style="color: var(--lapis-lazuli);">
+                            Our customer support team is here to help you with any questions or issues.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-headset me-2"></i>Contact Support
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Order Actions -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3" style="color: var(--burgundy);">Order Actions</h5>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" onclick="trackOrder()">
+                        <i class="fas fa-map-marked-alt me-2"></i>Track Order
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="downloadInvoice()">
+                        <i class="fas fa-download me-2"></i>Download Invoice
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="requestReturn()">
+                        <i class="fas fa-undo me-2"></i>Request Return
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="writeReview()">
+                        <i class="fas fa-star me-2"></i>Write Review
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Delivery Information -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3" style="color: var(--burgundy);">
+                    <i class="fas fa-truck me-2"></i>Delivery Information
+                </h5>
+                
+                <div class="delivery-info">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="delivery-icon me-3">
+                            <i class="fas fa-box fa-2x" style="color: var(--silver-lake);"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold" style="color: var(--lapis-lazuli);">Package Delivered</div>
+                            <small class="text-muted">Delivered on {{ now()->subDays(1)->format('d F Y') }}</small>
                         </div>
                     </div>
                     
-                    <div class="flex gap-3">
-                        <button type="button" 
-                                onclick="closeUploadModal()"
-                                class="flex-1 bg-[#FCEFEA] text-[#4D4C7D] py-3 rounded-lg font-bold hover:bg-[#F9DCC4] transition-colors">
-                            Cancel
-                        </button>
-                        <button type="submit" 
-                                class="flex-1 bg-[#FF6F61] text-white py-3 rounded-lg font-bold hover:bg-[#FF8A80] transition-colors">
-                            Upload
-                        </button>
+                    <div class="border-top pt-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted d-block">Carrier</small>
+                                <strong>JNE</strong>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block">Tracking Number</small>
+                                <strong>TRK{{ rand(100000000, 999999999) }}</strong>
+                            </div>
+                        </div>
                     </div>
-                </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Customer Support -->
+        <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, var(--light-blue), #fff);">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3" style="color: var(--burgundy);">
+                    <i class="fas fa-headset me-2"></i>Customer Support
+                </h5>
+                
+                <div class="support-info">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-clock me-3" style="color: var(--silver-lake);"></i>
+                        <div>
+                            <div class="fw-bold" style="color: var(--lapis-lazuli);">Available 24/7</div>
+                            <small class="text-muted">We're here to help anytime</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-envelope me-3" style="color: var(--silver-lake);"></i>
+                        <div>
+                            <div class="fw-bold" style="color: var(--lapis-lazuli);">Email Support</div>
+                            <small class="text-muted">support@bunnypops.com</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-phone me-3" style="color: var(--silver-lake);"></i>
+                        <div>
+                            <div class="fw-bold" style="color: var(--lapis-lazuli);">Phone Support</div>
+                            <small class="text-muted">+62 812 3456 7890</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button class="btn btn-outline-primary w-100" onclick="contactSupport()">
+                        <i class="fas fa-comments me-2"></i>Live Chat
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Show upload modal
-    function showUploadModal(transactionId) {
-        document.getElementById('transaction-id').value = transactionId;
-        document.getElementById('upload-modal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    // Close upload modal
-    function closeUploadModal() {
-        document.getElementById('upload-modal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
-        resetModalForm();
-    }
-    
-    // Reset modal form
-    function resetModalForm() {
-        document.getElementById('upload-form').reset();
-        document.getElementById('image-preview-modal').style.display = 'none';
-        document.getElementById('upload-prompt-modal').style.display = 'block';
-    }
-    
-    // Image preview for modal
-    function previewModalImage(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            const maxSize = 2 * 1024 * 1024; // 2MB
-            
-            if (input.files[0].size > maxSize) {
-                alert('File size must be less than 2MB');
-                input.value = '';
-                return;
-            }
-            
-            reader.onload = function(e) {
-                document.getElementById('preview-image-modal').src = e.target.result;
-                document.getElementById('image-preview-modal').style.display = 'block';
-                document.getElementById('upload-prompt-modal').style.display = 'none';
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
-    function removeModalImage() {
-        document.getElementById('payment_proof_modal').value = '';
-        document.getElementById('image-preview-modal').style.display = 'none';
-        document.getElementById('upload-prompt-modal').style.display = 'block';
-    }
-    
-    // Handle form submission
-    document.getElementById('upload-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        const transactionId = document.getElementById('transaction-id').value;
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
-        // Show loading
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Uploading...';
-        submitBtn.disabled = true;
-        
-        fetch(`/transactions/${transactionId}/upload-proof`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': token
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                showNotification('Payment proof uploaded successfully!', 'success');
-                closeUploadModal();
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showNotification(data.message || 'Error uploading proof', 'error');
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('Error uploading proof', 'error');
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
+    function trackOrder() {
+        Swal.fire({
+            title: 'Track Your Order',
+            html: `
+                <div class="text-center mb-3">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                         class="img-fluid rounded mb-3">
+                    <h6 class="fw-bold" style="color: var(--lapis-lazuli);">Package Delivered</h6>
+                    <p class="text-muted">Your order has been delivered successfully.</p>
+                </div>
+                <div class="tracking-timeline">
+                    <div class="tracking-step active">
+                        <div class="tracking-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="tracking-info">
+                            <div class="fw-bold">Delivered</div>
+                            <small class="text-muted">${new Date().toLocaleDateString()}</small>
+                        </div>
+                    </div>
+                </div>
+            `,
+            confirmButtonColor: 'var(--burgundy)',
+            background: 'var(--light-pink)',
+            color: 'var(--burgundy)'
         });
-    });
+    }
     
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-20 right-4 z-50 px-6 py-3 rounded-lg shadow-xl animate-slide-in ${
-            type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 
-            'bg-red-100 text-red-800 border border-red-200'
-        }`;
-        notification.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-3"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            setTimeout(() => notification.remove(), 500);
-        }, 3000);
+    function downloadInvoice() {
+        Swal.fire({
+            title: 'Downloading Invoice...',
+            text: 'Please wait while we generate your invoice.',
+            timer: 2000,
+            showConfirmButton: false,
+            background: 'var(--light-pink)',
+            color: 'var(--burgundy)'
+        }).then(() => {
+            Swal.fire({
+                title: 'Invoice Downloaded!',
+                text: 'Your invoice has been downloaded successfully.',
+                icon: 'success',
+                confirmButtonColor: 'var(--burgundy)',
+                background: 'var(--light-pink)',
+                color: 'var(--burgundy)'
+            });
+        });
+    }
+    
+    function requestReturn() {
+        Swal.fire({
+            title: 'Request Return',
+            html: `
+                <div class="mb-3">
+                    <label class="form-label">Select Item to Return</label>
+                    <select class="form-select" id="returnItem">
+                        <option>Product Name 1</option>
+                        <option>Product Name 2</option>
+                        <option>Product Name 3</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Return Reason</label>
+                    <select class="form-select" id="returnReason">
+                        <option>Wrong Item Received</option>
+                        <option>Damaged Product</option>
+                        <option>Not as Described</option>
+                        <option>Changed Mind</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Additional Notes</label>
+                    <textarea class="form-control" id="returnNotes" rows="3"></textarea>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Submit Return Request',
+            confirmButtonColor: 'var(--burgundy)',
+            cancelButtonColor: 'var(--silver-lake)',
+            background: 'var(--light-pink)',
+            color: 'var(--burgundy)'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Request Submitted!',
+                    text: 'Your return request has been submitted. We will contact you within 24 hours.',
+                    icon: 'success',
+                    confirmButtonColor: 'var(--burgundy)',
+                    background: 'var(--light-pink)',
+                    color: 'var(--burgundy)'
+                });
+            }
+        });
+    }
+    
+    function writeReview() {
+        Swal.fire({
+            title: 'Write Review',
+            html: `
+                <div class="text-center mb-3">
+                    <div class="rating mb-3">
+                        ${Array(5).fill().map((_, i) => `
+                            <i class="fas fa-star text-warning" style="font-size: 2rem; cursor: pointer;" 
+                               onclick="setRating(${i + 1})" id="reviewStar-${i + 1}"></i>
+                        `).join('')}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Review Title</label>
+                        <input type="text" class="form-control" id="reviewTitle" placeholder="Title of your review">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Your Review</label>
+                        <textarea class="form-control" id="reviewText" rows="4" 
+                                  placeholder="Share your experience with this product..."></textarea>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Submit Review',
+            confirmButtonColor: 'var(--burgundy)',
+            cancelButtonColor: 'var(--silver-lake)',
+            background: 'var(--light-pink)',
+            color: 'var(--burgundy)',
+            preConfirm: () => {
+                const rating = document.querySelectorAll('.fa-star.active').length;
+                const title = document.getElementById('reviewTitle').value;
+                const review = document.getElementById('reviewText').value;
+                
+                if (rating === 0) {
+                    Swal.showValidationMessage('Please select a rating');
+                    return false;
+                }
+                
+                return { rating, title, review };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Thank You!',
+                    'Your review has been submitted successfully.',
+                    'success'
+                );
+            }
+        });
+    }
+    
+    function setRating(rating) {
+        document.querySelectorAll('.fa-star').forEach((star, index) => {
+            star.classList.remove('active');
+            if (index < rating) {
+                star.classList.add('active');
+            }
+        });
+    }
+    
+    function contactSupport() {
+        Swal.fire({
+            title: 'Contact Support',
+            html: `
+                <div class="text-center mb-3">
+                    <i class="fas fa-headset fa-3x mb-3" style="color: var(--silver-lake);"></i>
+                    <p class="mb-3" style="color: var(--lapis-lazuli);">
+                        Our support team is available 24/7 to assist you.
+                    </p>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="startLiveChat()">
+                        <i class="fas fa-comments me-2"></i>Start Live Chat
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="sendEmail()">
+                        <i class="fas fa-envelope me-2"></i>Send Email
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="callSupport()">
+                        <i class="fas fa-phone me-2"></i>Call Support
+                    </button>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            background: 'var(--light-pink)',
+            color: 'var(--burgundy)'
+        });
     }
 </script>
 
 <style>
-    .animate-slide-in {
-        animation: slideIn 0.3s ease-out;
+    .status-step {
+        position: relative;
+        padding: 10px;
     }
     
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+    .status-step.active .status-icon {
+        background-color: var(--cherry-blossom);
+        color: white;
+    }
+    
+    .status-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: var(--light-pink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        color: var(--burgundy);
+        border: 3px solid var(--cherry-blossom);
+    }
+    
+    .status-info {
+        margin-top: 10px;
+    }
+    
+    .order-item {
+        transition: all 0.3s ease;
+    }
+    
+    .order-item:hover {
+        background-color: rgba(242, 174, 188, 0.05);
+    }
+    
+    .delivery-icon {
+        width: 50px;
+        height: 50px;
+        background-color: rgba(90, 134, 203, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .badge.bg-success {
+        background-color: var(--silver-lake) !important;
+    }
+    
+    .text-success {
+        color: var(--silver-lake) !important;
+    }
+    
+    .text-danger {
+        color: var(--cherry-blossom) !important;
+    }
+    
+    .rating .fa-star {
+        transition: all 0.2s ease;
+    }
+    
+    .rating .fa-star:hover {
+        transform: scale(1.2);
+    }
+    
+    .rating .fa-star.active {
+        color: #ffc107;
+        text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
     }
 </style>
 @endsection

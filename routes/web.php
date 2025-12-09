@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
 
     // -------- Checkout Routes --------
     Route::prefix('checkout')->group(function () {
-        Route::get('/', [CheckoutController::class, 'index'])->name('checkout');
+        Route::get('/', [CheckoutController::class, 'show'])->name('checkout');
         Route::post('/process', [CheckoutController::class, 'process'])->name('checkout.process');
         Route::get('/success/{transaction}', [CheckoutController::class, 'success'])->name('checkout.success');
         Route::get('/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');

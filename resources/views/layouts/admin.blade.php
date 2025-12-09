@@ -148,14 +148,14 @@
             </li>
             
             <li class="{{ request()->is('admin/products*') ? 'active' : '' }}">
-                <a href="{{ route('admin.products.index') }}">
+                <a href="{{ route('products.index') }}">
                     <i class="fas fa-box"></i>
                     Products
                 </a>
             </li>
             
             <li class="{{ request()->is('admin/transactions*') ? 'active' : '' }}">
-                <a href="{{ route('admin.transactions.index') }}">
+                <a href="{{ route('transactions.index') }}">
                     <i class="fas fa-exchange-alt"></i>
                     Transactions
                 </a>
@@ -167,23 +167,23 @@
                     Settings
                 </a>
                 <ul class="collapse list-unstyled" id="settingsSubmenu">
-                    <li class="{{ request()->is('admin/settings/logo') ? 'active' : '' }}">
+                    <li class="{{ request()->is('settings/logo') ? 'active' : '' }}">
                         <a href="{{ route('admin.settings.logo') }}">
                             <i class="fas fa-image"></i> Logo
                         </a>
                     </li>
                     <li class="{{ request()->is('admin/settings/footer') ? 'active' : '' }}">
-                        <a href="{{ route('admin.settings.footer') }}">
+                        <a href="{{ route('settings.footer') }}">
                             <i class="fas fa-window-maximize"></i> Footer
                         </a>
                     </li>
                     <li class="{{ request()->is('admin/settings/about') ? 'active' : '' }}">
-                        <a href="{{ route('admin.settings.about') }}">
+                        <a href="{{ route('settings.about') }}">
                             <i class="fas fa-info-circle"></i> About
                         </a>
                     </li>
                     <li class="{{ request()->is('admin/settings/qris') ? 'active' : '' }}">
-                        <a href="{{ route('admin.settings.qris') }}">
+                        <a href="{{ route('settings.qris') }}">
                             <i class="fas fa-qrcode"></i> QRIS
                         </a>
                     </li>

@@ -7,7 +7,7 @@
     <h1 class="fw-bold">
         <i class="fas fa-box me-2"></i>Products Management
     </h1>
-    <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
+    <a href="{{ route('products.create') }}" class="btn btn-primary">
         <i class="fas fa-plus me-2"></i>Add Product
     </a>
 </div>
@@ -119,10 +119,10 @@
                         </td>
                         <td class="text-end pe-4">
                             <div class="btn-group" role="group">
-                                <a href="{{ route('admin.products.show', $i) }}" class="btn btn-sm btn-outline-info">
+                                <a href="{{ route('products.show', $i) }}" class="btn btn-sm btn-outline-info">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('admin.products.edit', $i) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ route('products.edit', $i) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <button type="button" class="btn btn-sm btn-outline-danger" 
